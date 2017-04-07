@@ -4,8 +4,8 @@
 
 <style>
 	body {
-		padding: 36px 44.75px;
-		margin:0px;
+		padding: 0px!important;
+		margin:	0px!important;
 		font-size:0px; /* The Hell? */
 		overflow: scroll;
 		white-space: nowrap; /* To prevent wrapping of inline-block */
@@ -24,6 +24,11 @@
 	a:hover {
 		color: #FFF;
 		text-shadow: 0px 1px 0px black;
+	}
+	
+	body > div#board {
+		padding: 36px 44.75px;
+		margin:0px;
 	}
 	
 	body > div#board > ul {
@@ -94,6 +99,9 @@
 			let rotation = currentRotation + offsetRotation;
 			$parent.css("transform", "rotate(" + rotation + "deg)");
 			$parent.data("rotation", rotation);
+			$parent.children().each(function(i, child) {
+				$(child).css("transform", "rotate(" + (-1 * $parent.data("rotation")) + "deg)")
+			});
 		})
 		
 		$controls.find("a.commit").click(function() {
@@ -128,6 +136,7 @@
 			}
 			
 			$controls.hide();
+			$controls.css("transform", "rotate(0deg)");
 		})
 		
 		/*$("body").click(function(event) {
