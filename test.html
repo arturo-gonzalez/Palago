@@ -78,24 +78,73 @@
 
 <script>
 	
+	function Neighbors($target) {
+		let $column = $target.parent();
+		let $columnPrev = $column.prev();
+		let $columnNext = $column.next();
+		let offset = $column.hasClass("offset");
+		let currentIndex = $target.index();
+		
+		let $columnChildren = $column.children();
+		
+		var neighbors = new Array();
+		
+		let indexOffset = (offset? 0 : -1);
+		
+		
+		if (currentIndex > 0) neighbors.push($columnChildren[currentIndex - 1]);
+		
+		if ($columnNext) {
+			let $columnNextChildren = $columnNext.children();
+			if (currentIndex + indexOffset >= 0) neighbors.push($columnNextChildren[currentIndex + indexOffset]);
+			if (currentIndex < $columnNextChildren.length) neighbors.push($columnNextChildren[currentIndex + 1 + indexOffset]);
+		}
+		
+		if (currentIndex + 1 < $columnChildren.length) neighbors.push($columnChildren[currentIndex + 1]);
+		
+		if ($columnPrev) {
+			let $columnPrevChildren = $columnPrev.children();
+			if (currentIndex < $columnPrevChildren.length) neighbors.push($columnPrevChildren[currentIndex + 1 + indexOffset]);
+			if (currentIndex + indexOffset >= 0) neighbors.push($columnPrevChildren[currentIndex + indexOffset]);
+		}
+		
+		return neighbors;
+	}
+	
+	function AdjacentTo(pieceA, pieceB) {
+		
+	}
 	
 	$(function() {
 		let $controls = $($("#t-controls").html());
+		var $pieceLastCommitted = null;
+		var $pieceLastSelected = null;
 		
 		function $MakeItem() {
-			var $item = $("<li>").click(function() {
-				if ($(this).hasClass("used")) return;
+			return $("<li>").click(function() {
+				if ($pieceLastSelected && !$pieceLastSelected.data("committed"))
+					$pieceLastSelected.removeClass("used");
+				
+				if ($(this).data("committed")) return;
+				$(this).data("committed", false);
+				
+				Neighbors($(this));
+				
+				
+				$pieceLastSelected = $(this);
 				
 				$(this).addClass("used").append($controls);
+
 				$controls.show();
+				
+				console.log("Click event on piece!");
 			})
-			return $item;
 		}
 		
 		$controls.find("a.rotation").click(function() {
 			let $parent = $(this).closest("li");
 			let currentRotation = $parent.data("rotation") || 0;
-			let offsetRotation = ($(this).html() == "&gt;")? 60 : -60;
+			let offsetRotation = ($(this).html() == "&gt;")? 120 : -120;
 			let rotation = currentRotation + offsetRotation;
 			$parent.css("transform", "rotate(" + rotation + "deg)");
 			$parent.data("rotation", rotation);
@@ -107,6 +156,12 @@
 		$controls.find("a.commit").click(function() {
 			let $target = $(this).closest("li");
 			let $parent = $target.parent();
+			
+			$pieceLastCommitted = $target;
+			
+			$target.data("committed", true);
+		
+			console.log("Click event on commit!");
 			
 			if ($("body > div#board > ul:first-child").is($parent)) {
 				var $list = $("<ul>");
@@ -136,44 +191,11 @@
 			}
 			
 			$controls.hide();
+			
+			// Bullshit hack
 			$controls.css("transform", "rotate(0deg)");
 		})
-		
-		/*$("body").click(function(event) {
-			let target = event.target;
-			let $target = $(target);
-			let $parent = $target.parent();
-			
-			if ($target.is("li") && !$target.hasClass("used")) {
-				if ($("body > ul:first-child").is($parent)) {
-					var $list = $("<ul>");
-					if (!$parent.hasClass("offset")) $list.addClass("offset");
-					$parent.children().each(function(i) {
-						$list.append($MakeItem());
-					})
-					$("body").prepend($list);
-				}
-				if ($("body > ul:last-child").is($parent)) {
-					var $list = $("<ul>");
-					if (!$parent.hasClass("offset")) $list.addClass("offset");
-					$parent.children().each(function(i) {
-						$list.append($MakeItem());
-					})
-					$("body").append($list);
-				}
-				if ($($parent.children().first()).is($target)) {
-					$("body>ul").each(function(i) {
-						$(this).prepend($MakeItem());
-					});
-				}
-				if ($($parent.children().last()).is($target)) {
-					$("body>ul").each(function(i) {
-						$(this).append($MakeItem());
-					});
-				}
-			}
-		})*/
-		
+
 		var $StartList = $("<ul>").append($MakeItem());
 		$("body > div#board").append($StartList);
 	});
@@ -190,7 +212,7 @@
 
 		<template id="t-controls">
 			<div>
-				<p><a href="#" class="rotation">&lt;</a> ROTATE <a href="#" class="rotation">&gt;</a></p>
+				<p><a href="#" class="rotation">&lt;</a> TURN <a href="#" class="rotation">&gt;</a></p>
 				<p><a href="#" class="commit">[PLACE]</a></p>
 			</div>
 		</template>
