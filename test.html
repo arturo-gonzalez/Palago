@@ -92,20 +92,20 @@
 		let indexOffset = (offset? 0 : -1);
 		
 		
-		if (currentIndex > 0) neighbors.push($columnChildren[currentIndex - 1]);
+		if (currentIndex - 1 >= 0) neighbors.push($columnChildren[currentIndex - 1]);
 		
-		if ($columnNext) {
+		if ($columnNext.length) {
 			let $columnNextChildren = $columnNext.children();
-			if (currentIndex + indexOffset >= 0) neighbors.push($columnNextChildren[currentIndex + indexOffset]);
-			if (currentIndex < $columnNextChildren.length) neighbors.push($columnNextChildren[currentIndex + 1 + indexOffset]);
+			if ($columnNextChildren[currentIndex + indexOffset]) neighbors.push($columnNextChildren[currentIndex + indexOffset]);
+			if ($columnNextChildren[currentIndex + 1 + indexOffset]) neighbors.push($columnNextChildren[currentIndex + 1 + indexOffset]);
 		}
 		
 		if (currentIndex + 1 < $columnChildren.length) neighbors.push($columnChildren[currentIndex + 1]);
 		
-		if ($columnPrev) {
+		if ($columnPrev.length) {
 			let $columnPrevChildren = $columnPrev.children();
-			if (currentIndex < $columnPrevChildren.length) neighbors.push($columnPrevChildren[currentIndex + 1 + indexOffset]);
-			if (currentIndex + indexOffset >= 0) neighbors.push($columnPrevChildren[currentIndex + indexOffset]);
+			if ($columnPrevChildren[currentIndex + 1 + indexOffset]) neighbors.push($columnPrevChildren[currentIndex + 1 + indexOffset]);
+			if ($columnPrevChildren[currentIndex + indexOffset]) neighbors.push($columnPrevChildren[currentIndex + indexOffset]);
 		}
 		
 		return neighbors;
