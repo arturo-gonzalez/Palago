@@ -1,14 +1,67 @@
 <html>
 <head>
 
+<!-- Bootstrap 3 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Bootstrap 3 Theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Custom Styles -->
 <link rel="stylesheet" type="text/css" href="styles.css">
+
+<!-- JQuery 3 -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+<!-- Bootstrap 3 Script -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 </head>
 <body>
-    <div class="topnav" id="myTopnav">
-		<a href="test.html">Home</a>
-		<a href="help.html">Help</a>
-		<a href="about.html">About</a>
-		</div>
+
+    	<!-- Navigation Bar -->
+		<nav class="navbar navbar-inverse navbar-static-top">
+			<div class="container-fluid">
+
+				<!-- The header below will only be visible on mobile -->
+				<header class="navbar-header">
+					<a class="navbar-brand" href="palago.html">
+						<span>Palago</span>
+					</a>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
+						<!-- "Toggle navigation" only visible on screen-readers -->
+						<span class="sr-only">Toggle navigation</span>
+
+						<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</header>
+
+				<!-- Navigation links and other content will be collapsable when in mobile devices -->
+				<div class="collapse navbar-collapse" id="navbar-primary">
+					
+					<!-- Left navigation bar segment -->
+					<div class="navbar-left">
+						<ul class="nav navbar-nav">
+							<li>
+								<a href="help.html">Help</a>
+							</li>
+							<li>
+								<a href="about.html">About</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Right navigation bar segment -->
+					<div class="navbar-right">
+						<p class="navbar-text" data-toggle="tooltip" data-placement="top">[ABOUT]</p>
+					</div>
+				</div>
+			</div>
+		</nav>
+
     <table class="table" width="100%">
         <tr>
             <td>
@@ -37,8 +90,5 @@
         </tr>
     </table>
 
-
-
 </body>
-
 </html>
