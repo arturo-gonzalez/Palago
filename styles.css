@@ -1,37 +1,3 @@
-/* Add a black background color to the top navigation */
-.topnav {
-    background-color: #003399;
-    overflow: hidden;
-}
-
-/* Style the links inside the navigation bar */
-.topnav a {
-    float: left;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-}
-
-/* Change the color of links on hover */
-.topnav a:hover {
-    background-color: #ddd;
-    color: black;
-}
-
-/* Add a color to the active/current link */
-.topnav a.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
-body {    
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
 .title{
     font-size: 24px;
     font-family:arial;
@@ -46,4 +12,78 @@ body {
     background-color: #cbcbb4;
     font-family: arial;
     padding:10px; 
+}
+
+
+body {
+	padding: 0px!important;
+	margin:	0px!important;
+	
+	overflow: scroll;
+	white-space: nowrap; /* To prevent wrapping of inline-block */
+	
+	font-family: arial, "Century Gothic";
+	
+	color: #333;
+	text-shadow: 0px -1px 0px white;
+}
+
+body > div#board {
+	font-size:0px; /* The Hell? */
+	padding: 36px 44.75px;
+	margin:0px;
+}
+
+body > div#board a {
+	color: inherit;
+	text-decoration: none;
+}
+
+body > div#board a:hover {
+	color: #FFF;
+	text-shadow: 0px 1px 0px black;
+}
+
+body > div#board > ul {
+	display: inline-block;
+	position: relative;
+	list-style-type: none;
+	padding: 0px;
+
+	margin-left: -8.75px;
+	margin-right: -8.75px;
+	
+	margin-bottom: 0px;
+}
+
+body > div#board > ul.offset {
+	top: 62px;
+	/*left: -36px;*/
+}
+
+body > div#board > ul > li {
+	width: 142px;
+	height: 123px;
+	padding: 0;
+	/*padding-top: 1.8em;*/
+	margin: inherit;
+	background-image: url('unused-piece.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	
+	font-size: 18px;
+	text-align: center;
+}
+
+body > div#board > ul > li.used {
+	background-image: url('piece.png');
+}
+
+body > div#board > ul > li > * {
+	position: absolute;
+	width: 100%;
+	padding-top: 1em;
+	padding-left: 8.75px;
+	padding-right: 8.75px;
+	text-align: center;
 }

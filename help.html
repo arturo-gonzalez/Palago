@@ -1,14 +1,67 @@
 <html>
 <head>
 
+<!-- Bootstrap 3 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Bootstrap 3 Theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Custom Styles -->
 <link rel="stylesheet" type="text/css" href="styles.css">
+
+<!-- JQuery 3 -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+
+<!-- Bootstrap 3 Script -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 </head>
 <body>
-    <div class="topnav" id="myTopnav">
-		<a href="test.html">Home</a>
-		<a href="help.html">Help</a>
-		<a href="about.html">About</a>
-		</div>
+    
+    	<!-- Navigation Bar -->
+		<nav class="navbar navbar-inverse navbar-static-top">
+			<div class="container-fluid">
+
+				<!-- The header below will only be visible on mobile -->
+				<header class="navbar-header">
+					<a class="navbar-brand" href="palago.html">
+						<span>Palago</span>
+					</a>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
+						<!-- "Toggle navigation" only visible on screen-readers -->
+						<span class="sr-only">Toggle navigation</span>
+
+						<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</header>
+
+				<!-- Navigation links and other content will be collapsable when in mobile devices -->
+				<div class="collapse navbar-collapse" id="navbar-primary">
+					
+					<!-- Left navigation bar segment -->
+					<div class="navbar-left">
+						<ul class="nav navbar-nav">
+							<li>
+								<a href="help.html">Help</a>
+							</li>
+							<li>
+								<a href="about.html">About</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Right navigation bar segment -->
+					<div class="navbar-right">
+						<p class="navbar-text" data-toggle="tooltip" data-placement="top">[HELP]</p>
+					</div>
+				</div>
+			</div>
+		</nav>	
+    
     <table class="table">
         <tr>
             <td>
@@ -26,9 +79,15 @@
         <tr>
             <td>
                 <div class="content">
-                    <h1>How to Play</h1>
-                    <p>Click on the hexagonal shape and choose the orientation of the peace by clicking rotate. When you are ready to play the piece click place. 
-                    </p>
+                      <h1>How to Play</h1>
+                        <p>You can simply click on the hexagonal shape and choose the orientation of the peace by clicking rotate. When you are ready to play the piece click place. Please keep in mind the following sugguestions. </p>
+
+                        <p><i>Forcing Moves: </i></p>
+                        <p> &emsp; A forced move occurs when pieces are placed in such a way that the opponent has only one play they must make to avoid defeat. Since the minimum number of pieces needed to win is 5, the minimum number of pieces needed to force a move is 3. 
+                        Types of Endgames (Endgames with types L, R, P, N). Assuming normal and optimal play, we determined that the second player should always win the game, making the default board state (blank/new board) be of type R. We diagnosed the following reasons why we think this is true: This is due to the fact that there are an even number of pieces in the game. It is futile for the first player to start a block-chain and continue repeating the same moves since that first player will run out of board pieces first, giving the second player the win by normal game (last move wins). 
+                        </p>
+                        <p><i>Hypothesis for good strategies: </i></p>
+                        <p> &emsp;With that information, the second player R, has the advantage because they are the first to have at least an extra piece available on the board, and a forced move is possible with at least three pieces. The player should create a forced move every turn, this strategy assures victory. This is a type P move. However the player needs to be careful with what forced move they try to make, some give an opportunity for the opponent to turn the tables and force a move. A player should make plays in which two simultaneous areas force a move (at least two pieces away from each other) which effectively ensure a winning strategy. Since the opponent can only play their pieces adjacent to each other, they cannot respond to both in one turn. </p>
                 </div>
                 
             </td>
@@ -36,8 +95,5 @@
         </tr>
     </table>
 
-
-
 </body>
-
 </html>
