@@ -70,18 +70,31 @@
 		return neighbors;
 	}
 	
-	function GetPlayerPieceVertex(player, $piece, vertex) {
+	function IsValidPlayerPieceVertex(player, $piece, vertex) {
 		if (!($piece instanceof jQuery)) return false;
 		if (["L", "R"].indexOf(player) < 0) return false;
 		if (vertex < 0 && vertex > 2) return false;
+		return true;
+	}
+	
+	function GetPlayerPieceVertex(player, $piece, vertex) {
+		if (!IsValidPlayerPieceVertex(player, $piece, vertex)) return false;
 		return $piece.data(player)[vertex];
 	}
 	
 	function SetPlayerPieceVertexValue(player, $piece, vertex, value) {
-		if (!($piece instanceof jQuery)) return false;
-		if (["L", "R"].indexOf(player) < 0) return false;
-		if (vertex < 0 && vertex > 2) return false;
+		if (!IsValidPlayerPieceVertex(player, $piece, vertex)) return false;
 		return $piece.data(player)[vertex] = value;
+	}
+	
+	function GetPlayerPieceVertexInflow(playerID, $piece, vertexID) {
+		if (!IsValidPlayerPieceVertex(playerID, $piece, vertexID)) return false;
+		return $piece.data(playerID + "-inflow")[vertexID];
+	}
+	
+	function SetPlayerPieceVertexInflow(playerID, $piece, vertexID) {
+		if (!IsValidPlayerPieceVertex(playerID, $piece, vertexID)) return false;
+		return $piece.data(playerID + "-inflow")[vertexID] = true;
 	}
 	
 	function MakeNode($piece, playerID, nodeID) {
@@ -152,11 +165,10 @@
 				
 
 				$controls.show();
-				
-				console.log("Click event on piece!");
 			});
 			
 			$item.data("L", [null, null, null]).data("R", [null, null, null]);
+			$item.data("L-inflow", [false,false,false]).data("R-inflow", [false,false,false]);
 			$item.data("rotation", 0);
 			
 			return $item;
@@ -185,8 +197,6 @@
 			$pieceLastCommitted = $target;
 			
 			$target.data("committed", true);
-		
-			console.log("Click event on commit!");
 			
 			if ($("body > div#board > ul:first-child").is($parent)) {
 				var $list = $("<ul>");
@@ -215,6 +225,9 @@
 				});
 			}
 			
+			var date = new Date();
+			console.log(date.getTime());
+			
 			// Attach line between neighboring tiles
 			for (var sideA = 0; sideA < neighbors.length; sideA++) {
 				let $neighbor = neighbors[sideA] && $(neighbors[sideA]);
@@ -229,10 +242,19 @@
 				let PlayerIDs = ["L", "R"];
 				for (var k in PlayerIDs) {
 					let playerID = PlayerIDs[k];
-					if (!GetPlayerPieceVertex(playerID, $neighbor, sideBVertexID)) {
+					if ((GetPlayerPieceVertexInflow(playerID, $neighbor, sideBVertexID) && !GetPlayerPieceVertex(playerID, $neighbor, sideBVertexID)) || GetPlayerPieceVertex(playerID, $target, sideAVertexID)) {
 						SetPlayerPieceVertexValue(playerID, $neighbor, sideBVertexID, MakeNode($target, playerID, sideAVertexID));
+						SetPlayerPieceVertexInflow(playerID, $target, sideAVertexID);
+						console.log("Connection from neighbor [" + playerID + " - " + ["A", "B", "C"][sideBVertexID] + "] to target [" + playerID + " - " + ["A", "B", "C"][sideAVertexID] + "]:");
+						console.log($neighbor)
+						console.log($target);
+					} else {
+						SetPlayerPieceVertexValue(playerID, $target, sideAVertexID, MakeNode($neighbor, playerID, sideBVertexID));
+						SetPlayerPieceVertexInflow(playerID, $neighbor, sideBVertexID);
+						console.log("Connection from target [" + playerID + " - " + ["A", "B", "C"][sideAVertexID] + "] to neighbor [" + playerID + " - " + ["A", "B", "C"][sideBVertexID] + "]:");
+						console.log($target)
+						console.log($neighbor);
 					}
-					else SetPlayerPieceVertexValue(playerID, $target, sideAVertexID, MakeNode($neighbor, playerID, sideBVertexID));
 				}
 			}
 			
