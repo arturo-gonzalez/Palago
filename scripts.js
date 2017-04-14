@@ -49,52 +49,37 @@ function Neighbors($target) {
 	return neighbors;
 }
 
-function IsValidPlayerPieceVertex(player, $piece, vertex) {
-	if (!($piece instanceof jQuery)) return false;
-	if (["L", "R"].indexOf(player) < 0) return false;
-	if (vertex < 0 && vertex > 2) return false;
-	return true;
-}
-
-function GetPlayerPieceVertex(player, $piece, vertex) {
-	if (!IsValidPlayerPieceVertex(player, $piece, vertex)) return false;
-	return $piece.data(player)[vertex];
-}
-
-function SetPlayerPieceVertexValue(player, $piece, vertex, value) {
-	if (!IsValidPlayerPieceVertex(player, $piece, vertex)) return false;
-	return $piece.data(player)[vertex] = value;
-}
-
-function GetLinkedNode(node) {
-	return GetPlayerPieceVertex(node.targetPlayerID, node.targetPiece, node.targetNodeID);
-}
-
 function HasCircuit(vertex) {
 	var visited = new Array();
 	
-	while (vertex) {
-		// It doesn't have two connections, it's not part of a circuit.
-		if (vertex.length < 2) return false;
-		
+	if (!vertex) return false;
+	
+	do {
 		// Visit the current vertex, by getting source from an edge
 		// Notice that they're both coming form the same vertex, meaning,
 		// source is the same on vertex[0] and vertex[1]...
-		visited.push(vertex[0].source);
+		visited.push(vertex);
 		
-		var found = false;
-		for (var edgeID in vertex) {
-			if (visited.indexOf(vertex[edgeID].destination) < 0) {
-				vertex = vertex[edgeID].destination.data("edge")[vertex[edgeID].vertexID];
-				found = true;
-				break;
-			}
-		}
+		let vertexA = vertex.edgeA && vertex.edgeA.destination.data("edge")[vertex.edgeA.vertexID];
+		let vertexB = vertex.edgeB && vertex.edgeB.destination.data("edge")[vertex.edgeB.vertexID];
 		
-		if (!found) return true; // If there exists no unvisited node, we've got a loop!
+		// It doesn't have two connections, it's not part of a circuit.
+		if (!vertexA || !vertexB) return false;
+
+		vertex = false;
+		if (visited.indexOf(vertexA) < 0) vertex = vertexA; 
+		else
+		if (visited.indexOf(vertexB) < 0) vertex = vertexB;
+		
+		// If there exists no unvisited node, we've got a loop!
+	} while (vertex);
+
+	
+	for (var v in visited) {
+		console.log(visited[v]);
 	}
 
-	return false
+	return true;
 }
 
 function IsClosed($target) {
@@ -119,8 +104,6 @@ $(function() {
 	var $pieceLastCommitted = null;
 	var $pieceLastSelected = null;
 	
-	var PieceCount = 0;
-	
 	function $MakeItem() {
 		var $item = $("<li>").click(function() {
 			if ($pieceLastSelected && !$pieceLastSelected.data("committed"))
@@ -133,12 +116,15 @@ $(function() {
 			
 			$controls.css("transform", "rotate(" + ($(this).data("rotation")? ($(this).data("rotation") * -1) : 0) + "deg)");
 			$(this).addClass("used").append($controls);
-			
 
 			$controls.show();
 		});
 		
-		$item.data("edge", [new Array(), new Array(), new Array()]);
+		$item.data("edge", [
+			{edgeA:false, edgeB:false}, 
+			{edgeA:false, edgeB:false}, 
+			{edgeA:false, edgeB:false}
+		]);
 		$item.data("rotation", 0);
 		
 		return $item;
@@ -210,12 +196,16 @@ $(function() {
 			let thisVertexID = VertexIDForFaceID($target, thisFaceID);
 			let thatVertexID = VertexIDForFaceID($neighbor, thatFaceID);
 			
+			let thisVertex = $target.data("edge")[thisVertexID];
+			let thatVertex = $neighbor.data("edge")[thatVertexID];
+			
 			// Push new edges to both pieces.
-			$target.data("edge")[thisVertexID].push({source:$target, destination:$neighbor, vertexID:thatVertexID});
-			$neighbor.data("edge")[thatVertexID].push({source:$neighbor, destination:$target, vertexID:thisVertexID});
+			if (!thisVertex.edgeA) thisVertex.edgeA = {source:$target, destination:$neighbor, vertexID:thatVertexID};
+			else thisVertex.edgeB = {source:$target, destination:$neighbor, vertexID:thatVertexID};
+			
+			if (!thatVertex.edgeA) thatVertex.edgeA = {source:$neighbor, destination:$target, vertexID:thisVertexID};
+			else thatVertex.edgeB = {source:$neighbor, destination:$target, vertexID:thisVertexID};
 		}
-		
-		$target.append($("<p>").text(++PieceCount));
 		
 		if (IsClosed($target)) alert("Loop detected!");
 		
