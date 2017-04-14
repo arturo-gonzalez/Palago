@@ -217,7 +217,7 @@ $(function() {
 		
 		$target.append($("<p>").text(++PieceCount));
 		
-		if (IsClosed($target)) console.log("Loop detected!");
+		if (IsClosed($target)) alert("Loop detected!");
 		
 		$controls.hide();
 	})
