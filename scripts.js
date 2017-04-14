@@ -52,7 +52,7 @@ function Neighbors($target) {
 function HasCircuit(vertex) {
 	var visited = new Array();
 	
-	if (!vertex) return false;
+	if (!vertex) return false; // If no vertex was passed, a loop is impossible.
 	
 	do {
 		// Visit the current vertex, by getting source from an edge
@@ -66,13 +66,15 @@ function HasCircuit(vertex) {
 		// It doesn't have two connections, it's not part of a circuit.
 		if (!vertexA || !vertexB) return false;
 
-		vertex = false;
+		vertex = false; // Clear vertex and attempt to populate it based on vertexA or vertexB.
+
+		// Go to the next unvisited neighbor, either vertexA or vertexB.
+		// If all neighbor vertices have been visited, we've got a loop!
 		if (visited.indexOf(vertexA) < 0) vertex = vertexA; 
 		else
 		if (visited.indexOf(vertexB) < 0) vertex = vertexB;
 		
-		// If there exists no unvisited node, we've got a loop!
-	} while (vertex);
+	} while (vertex); // If we've still go at least one unvisited vertex, continue checking.
 
 	
 	for (var v in visited) {
