@@ -58,11 +58,58 @@
 
 					<!-- Right navigation bar segment -->
 					<div class="navbar-right">
-						<p class="navbar-text" data-toggle="tooltip" data-placement="top">[ALPHA]</p>
+						<button type="button" class="btn btn-primary navbar-btn pull-left" data-toggle="collapse" data-target="#settings" aria-expanded="false"></span> Settings</button>
+						<p class="navbar-text">[ALPHA]</p>
 					</div>
 				</div>
 			</div>
 		</nav>
+		
+		<article class="container-fluid collapse" id="settings">
+			<header>
+					<h3>Winning Conditions</h3>
+			</header>
+				
+			<section class="well">
+				<header>
+					<h4>Straights</h4>
+				</header>
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="input-group">
+							<span class="input-group-addon">Minimal</span>
+							<input type="text" class="form-control" aria-label="..." placeholder="1" disabled>
+							<span class="input-group-addon">
+								<input type="checkbox" aria-label="...">
+							</span>
+						</div>
+					</div>
+					<br class="visible-xs">
+					<div class="col-sm-4">
+						<div class="input-group">
+							<span class="input-group-addon">Adjacent</span>
+							<input type="text" class="form-control" aria-label="..." placeholder="0" disabled>
+							<span class="input-group-addon">
+								<input type="checkbox" aria-label="...">
+							</span>
+						</div>
+					</div>
+					<br class="visible-xs">
+					<div class="col-sm-4">
+						<div class="input-group">
+							<span class="input-group-addon">Other</span>
+							<input type="text" class="form-control" aria-label="..." placeholder="0" disabled>
+							<span class="input-group-addon">
+								<input type="checkbox" aria-label="...">
+							</span>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--<div class="btn-group btn-group-justified">
+				<a href="#" type="button" class="btn btn-success">Apply Changes</a>
+			</div>-->
+		</article>
 
 		<template id="t-controls">
 			<div>
