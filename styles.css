@@ -1,26 +1,8 @@
-.title{
-    font-size: 24px;
-    font-family:arial;
-}
-
-.table{
-    padding: 20px;
-
-}
-
-.content{
-    background-color: #cbcbb4;
-    font-family: arial;
-    padding:10px; 
-}
-
-
 body {
 	padding: 0px!important;
 	margin:	0px!important;
 	
 	overflow: scroll;
-	white-space: nowrap; /* To prevent wrapping of inline-block */
 	
 	font-family: arial, "Century Gothic";
 	
@@ -29,6 +11,9 @@ body {
 }
 
 body > div#board {
+	white-space: nowrap; /* To prevent wrapping of inline-block */
+	overflow: scroll;
+	
 	font-size:0px; /* The Hell? */
 	padding: 36px 44.75px;
 	margin:0px;
@@ -86,4 +71,20 @@ body > div#board > ul > li > * {
 	padding-left: 8.75px;
 	padding-right: 8.75px;
 	text-align: center;
+}
+
+body .blue-player, body .white-player {
+	background-color: #666;
+	border-radius: 3px;
+	padding-left: 2px;
+	padding-right: 2px;
+	text-shadow: none;
+}
+
+body .blue-player {
+	color: #45c8ff;
+}
+
+body .white-player {
+	color: #FFFFFF;
 }

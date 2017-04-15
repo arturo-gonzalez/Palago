@@ -76,11 +76,6 @@ function HasCircuit(vertex) {
 		
 	} while (vertex); // If we've still go at least one unvisited vertex, continue checking.
 
-	
-	for (var v in visited) {
-		console.log(visited[v]);
-	}
-
 	return true;
 }
 
