@@ -76,7 +76,7 @@ function HasCircuit(vertex) {
 		
 	} while (vertex); // If we've still go at least one unvisited vertex, continue checking.
 
-	return true;
+	return visited;
 }
 
 function IsClosed($target) {
@@ -85,6 +85,19 @@ function IsClosed($target) {
 	}
 
 	return false;
+}
+
+function GetStraightCountFromPath(path) {
+	var totalStraight = 0;
+	for	(var i in path) {
+		if (path[i].edgeA.vertexID == 1) totalStraight += 1;
+		if (path[i].edgeB.vertexID == 1) totalStraight += 1;
+	}
+	return totalStraight / 2;
+}
+
+function GetMaxAdjacentStraightCountFromPath(path) {
+	
 }
 
 function VertexIDForFaceID($piece, faceID) {
