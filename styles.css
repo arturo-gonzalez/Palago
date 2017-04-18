@@ -38,7 +38,7 @@ body > div#board > ul {
 	margin-left: -8.75px;
 	margin-right: -8.75px;
 	
-	margin-bottom: 0px;
+	margin-bottom: 123px;
 }
 
 body > div#board > ul.offset {
@@ -51,7 +51,9 @@ body > div#board > ul > li {
 	height: 123px;
 	padding: 0;
 	/*padding-top: 1.8em;*/
-	margin: inherit;
+	margin-left: inherit;
+	margin-right: inherit;
+	margin-bottom: 0px;
 	background-image: url('unused-piece.png');
 	background-position: center center;
 	background-repeat: no-repeat;

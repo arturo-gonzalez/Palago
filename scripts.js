@@ -49,7 +49,7 @@ function Neighbors($target) {
 	return neighbors;
 }
 
-function HasCircuit(vertex) {
+function GetCircuit(vertex) {
 	var visited = new Array();
 	
 	if (!vertex) return false; // If no vertex was passed, a loop is impossible.
@@ -79,15 +79,16 @@ function HasCircuit(vertex) {
 	return visited;
 }
 
-function IsClosed($target) {
+function GetCircuits($target) {
+	var circuits = new Array();
 	for (var thisVertexID in $target.data("edge")) {
-		if (HasCircuit($target.data("edge")[thisVertexID])) return true;
+		let circuit = GetCircuit($target.data("edge")[thisVertexID]);
+		circuits[thisVertexID] = circuit? circuit : false;
 	}
-
-	return false;
+	return circuits;	
 }
 
-function GetStraightCountFromPath(path) {
+function GetStraightCountFromCircuit(path) {
 	var totalStraight = 0;
 	for	(var i in path) {
 		if (path[i].edgeA.vertexID == 1) totalStraight += 1;
@@ -96,8 +97,62 @@ function GetStraightCountFromPath(path) {
 	return totalStraight / 2;
 }
 
-function GetMaxAdjacentStraightCountFromPath(path) {
+function GetStraightMaxAdjacentCountFromCircuit(path) {
+	var globalMaximum = 0;
+	var localMaximum = 0;
+	for (var i = 0; i < path.length || (localMaximum > 0 && i < path.length * 2); i++) {
+		let thisVertex = path[i % path.length];
+		let thatVertex = path[(i + 1) % path.length];
+		
+		thisVertex.edgeA.source.css("border", "1px solid red");
+		thatVertex.edgeA.source.css("border", "1px solid red");
+		
+		let thisEdge = (thisVertex.edgeA.destination[0] === thatVertex.edgeA.source[0])? thisVertex.edgeA : thisVertex.edgeB;
+		let thatEdge = (thatVertex.edgeA.destination[0] === thisVertex.edgeA.source[0])? thatVertex.edgeA : thatVertex.edgeB;
+		
+		if (thisEdge.vertexID != 1 || thatEdge.vertexID != 1) {
+			if (localMaximum > globalMaximum) globalMaximum = localMaximum; 
+			localMaximum = 0;
+		} else localMaximum++;
+		
+		
+		thisVertex.edgeA.source.css("border", "none");
+		thatVertex.edgeA.source.css("border", "none");
+	}
+	return (globalMaximum > 0)? globalMaximum + 1 : 0;
+}
+
+function GetWinnerFromTarget($target) {
+	let requiredStraightsMinimal = $("#setting-straights-minimal button[data-reset]").data("level");
+	let requiredStraigthsAdjacent = $("#setting-straights-adjacent button[data-reset]").data("level");
 	
+	let circuits = GetCircuits($target);
+	
+	// All will be initially assumed to not be candidates.
+	var candidateCircuit = [false, false, false];
+	
+	for (var c = 0; c < circuits.length; c++) {
+		if (!circuits[c]) continue;
+		if (GetStraightCountFromCircuit(circuits[c]) < requiredStraightsMinimal) continue;
+		if (GetStraightMaxAdjacentCountFromCircuit(circuits[c]) < requiredStraigthsAdjacent) continue;
+		candidateCircuit[c] = true;
+	}
+	
+	let playerACircuit = (circuits[0] && !circuits[1])? 0 : ((circuits[1] && circuits[2])? 1 : false);
+	let playerBCircuit = (circuits[2] && !circuits[1])? 2 : ((circuits[1] && circuits[0])? 1 : false);
+	
+	var playerAWon = false;
+	var playerBWon = false;
+	
+	if (playerACircuit !== false && candidateCircuit[playerACircuit]) playerAWon = true;
+	if (playerBCircuit !== false && candidateCircuit[playerBCircuit]) playerBWon = true;
+	
+	if (playerAWon && playerBWon) return "OPPONENT";
+	
+	if (playerAWon) return "PLAYER2";
+	if (playerBWon) return "PLAYER1";
+	
+	return false;
 }
 
 function VertexIDForFaceID($piece, faceID) {
@@ -110,6 +165,50 @@ function VertexIDForFaceID($piece, faceID) {
 }
 
 $(function() {
+	// Settings Interface Logic =======================================
+	// ================================================================
+	let $straightsMinimalSettingButtons = $("#setting-straights-minimal")
+	let $straightsMinimalSettingDisplay = $straightsMinimalSettingButtons.find("button[data-reset]");
+	
+	$straightsMinimalSettingButtons.find("button").click(function(event) {
+		if ($(this).attr("data-reset") !== undefined) return;
+		let offset = $(this).attr("data-increment") !== undefined? 1 : ($(this).attr("data-decrement") !== undefined? -1 : 0);
+		let result = $straightsMinimalSettingDisplay.data("level") + offset;
+		if (result > 0) 
+		{
+			$straightsMinimalSettingDisplay.data("level", result);
+			$straightsMinimalSettingDisplay.text(result + " Required");
+			$straightsMinimalSettingDisplay.prop("disabled", (result == 1));
+		}
+	});
+	
+	$straightsMinimalSettingDisplay.click(function(event) {
+		$(this).data("level", 1).text($(this).data("level") + " Required").prop("disabled", true);
+	}).data("level", 1);
+	
+	
+	let $straightsAdjacentSettingButtons = $("#setting-straights-adjacent")
+	let $straightsAdjacentSettingDisplay = $straightsAdjacentSettingButtons.find("button[data-reset]");
+	
+	$straightsAdjacentSettingButtons.find("button").click(function(event) {
+		if ($(this).attr("data-reset") !== undefined) return;
+		let offset = $(this).attr("data-increment") !== undefined? 1 : ($(this).attr("data-decrement") !== undefined? -1 : 0);
+		let result = $straightsAdjacentSettingDisplay.data("level") + offset;
+		if (result >= 0) 
+		{
+			$straightsAdjacentSettingDisplay.data("level", result);
+			$straightsAdjacentSettingDisplay.text(result + " Adjacent");
+			$straightsAdjacentSettingDisplay.prop("disabled", (result == 0));
+		}
+	});
+	
+	$straightsAdjacentSettingDisplay.click(function(event) {
+		$(this).data("level", 0).text($(this).data("level") + " Adjacent").prop("disabled", true);
+	}).data("level", 0);	
+	
+	
+	// Tile Controller Logic ==========================================
+	// ================================================================
 	let $controls = $($("#t-controls").html());
 	var $pieceLastCommitted = null;
 	var $pieceLastSelected = null;
@@ -217,11 +316,18 @@ $(function() {
 			else thatVertex.edgeB = {source:$neighbor, destination:$target, vertexID:thisVertexID};
 		}
 		
-		if (IsClosed($target)) alert("Loop detected!");
+		/*let circuit = IsClosed($target);
+		if (path) {
+			console.log("Max adjacent straights: " + GetMaxAdjacentStraightCountFromPath(path));
+			alert("Loop detected!");
+		}*/
+		let winner = GetWinnerFromTarget($target);
+		if (winner) alert(winner + " won the game!");
 		
 		$controls.hide();
 	})
 
+	
 	var $StartList = $("<ul>").append($MakeItem());
 	$("body > div#board").append($StartList);
 });
