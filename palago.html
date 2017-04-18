@@ -59,14 +59,14 @@
 					<!-- Right navigation bar segment -->
 					<div class="navbar-right">
 						<button type="button" class="btn btn-primary navbar-btn pull-left" data-toggle="collapse" data-target="#settings" aria-expanded="false"></span> Settings</button>
-						<p class="navbar-text">[ALPHA]</p>
+						<p class="navbar-text" id="turn-display">[ALPHA]</p>
 					</div>
 				</div>
 			</div>
 		</nav>
 		
 		<article class="container-fluid collapse" id="settings">
-			<div class="hidden">
+			<div>
 				<header>
 						<h3>Board Configuration</h3>
 				</header>
@@ -82,7 +82,7 @@
 									<button type="button" class="btn btn-default" data-decrement>&minus;</button>
 								</div>
 								<div class="btn-group" role="group">
-									<button type="button" class="btn btn-default" data-reset disabled>48 Total</button>
+									<button type="button" class="btn btn-default" data-reset disabled>48 Available</button>
 								</div>
 								<div class="btn-group" role="group">
 									<button type="button" class="btn btn-default" data-increment>&plus;</button>
@@ -93,7 +93,7 @@
 				</section>
 			</div>
 
-			<div class="hidden">
+			<div>
 				<header>
 						<h3>Rules</h3>
 				</header>
@@ -104,7 +104,7 @@
 					</header>
 					<div class="row">
 						<div class="col-sm-6">
-							<div class="btn-group btn-group-justified" role="group" id="setting-unit-count">
+							<div class="btn-group btn-group-justified" role="group" id="setting-tiles-turn">
 								<div class="btn-group" role="group">
 									<button type="button" class="btn btn-default" data-decrement>&minus;</button>
 								</div>
@@ -117,12 +117,12 @@
 							</div>
 						</div>
 						<div class="col-sm-6">
-							<div class="btn-group btn-group-justified" role="group" id="setting-unit-count">
+							<div class="btn-group btn-group-justified" role="group" id="setting-tiles-adjacent">
 								<div class="btn-group" role="group">
 									<button type="button" class="btn btn-default" data-decrement>&minus;</button>
 								</div>
 								<div class="btn-group" role="group">
-									<button type="button" class="btn btn-default" data-reset disabled>1 Adj. Pair(s)</button>
+									<button type="button" class="btn btn-default" data-reset disabled>1 Adjacent</button>
 								</div>
 								<div class="btn-group" role="group">
 									<button type="button" class="btn btn-default" data-increment>&plus;</button>

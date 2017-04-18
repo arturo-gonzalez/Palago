@@ -1,3 +1,29 @@
+var Turn = 0;
+
+function GetTilesPerTurn() {
+	return $("#setting-tiles-turn button[data-reset]").data("level");
+}
+
+function GetRequiredAdjacentTilesPerTurn() {
+	return $("#setting-tiles-adjacent button[data-reset]").data("level");
+}
+
+function GetPlayerIDFromTurn(turn) {
+	return Math.floor(turn / GetTilesPerTurn()) % 2;
+}
+
+function GetPlayerTurnFromTurn(turn) {
+	return turn % GetTilesPerTurn();
+}
+
+function GetBoardUnitCount() {
+	return $("#setting-unit-count button[data-reset]").data("level");
+}
+
+function UpdateTurnDisplay(turn) {
+	$("#turn-display").text("P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1) + " (" + (turn + 1) + "/" + GetBoardUnitCount() + ")");
+}
+
 function Neighbors($target) {
 	let $column = $target.parent();
 	let $columnPrev = $column.prev();
@@ -47,6 +73,18 @@ function Neighbors($target) {
 	}
 	
 	return neighbors;
+}
+
+function CommittedNeighborCount(neighbors) {
+	var count = 0;
+	for (var i = 0; i < neighbors.length; i++) {
+		count += neighbors[i] && $(neighbors[i]).hasClass("used")? 1 : 0;
+	}
+	return count;
+}
+
+function GetRemainingUnitsForTurn(turn) {
+	return $("#setting-tiles-turn button[data-reset]").data("level") - GetPlayerTurnFromTurn(turn);
 }
 
 function GetCircuit(vertex) {
@@ -167,44 +205,34 @@ function VertexIDForFaceID($piece, faceID) {
 $(function() {
 	// Settings Interface Logic =======================================
 	// ================================================================
-	let $straightsMinimalSettingButtons = $("#setting-straights-minimal")
-	let $straightsMinimalSettingDisplay = $straightsMinimalSettingButtons.find("button[data-reset]");
+	$("#setting-unit-count button[data-reset]").data({level:48, levelStart:48, levelMinimum:48, label:" Available"});
+	$("#setting-tiles-turn button[data-reset]").data({level:2, levelStart:2, levelMinimum:2, label:" Per Turn"});
+	$("#setting-tiles-adjacent button[data-reset]").data({level:1, levelStart:1, levelMinimum:1, label:" Adjacent"});
+	$("#setting-straights-minimal button[data-reset]").data({level:1, levelStart:1, levelMinimum:1, label:" Required"});
+	$("#setting-straights-adjacent button[data-reset]").data({level:0, levelStart:0, levelMinimum:0, label:" Adjacent"});
 	
-	$straightsMinimalSettingButtons.find("button").click(function(event) {
-		if ($(this).attr("data-reset") !== undefined) return;
+	$("#setting-unit-count button, #setting-tiles-turn button, #setting-tiles-adjacent button, #setting-straights-minimal button, #setting-straights-adjacent button").not("[data-reset]").click(function(event) {
+		let $display = $(this).closest("div.btn-group-justified").find("button[data-reset]");
+		
 		let offset = $(this).attr("data-increment") !== undefined? 1 : ($(this).attr("data-decrement") !== undefined? -1 : 0);
-		let result = $straightsMinimalSettingDisplay.data("level") + offset;
-		if (result > 0) 
+		let result = $display.data("level") + offset;
+		
+		if (result >= $display.data("levelMinimum"))
 		{
-			$straightsMinimalSettingDisplay.data("level", result);
-			$straightsMinimalSettingDisplay.text(result + " Required");
-			$straightsMinimalSettingDisplay.prop("disabled", (result == 1));
+			$display.data("level", result);
+			$display.text(result + $display.data("label"));
+			$display.prop("disabled", (result == $display.data("levelMinimum")));
 		}
 	});
 	
-	$straightsMinimalSettingDisplay.click(function(event) {
-		$(this).data("level", 1).text($(this).data("level") + " Required").prop("disabled", true);
-	}).data("level", 1);
-	
-	
-	let $straightsAdjacentSettingButtons = $("#setting-straights-adjacent")
-	let $straightsAdjacentSettingDisplay = $straightsAdjacentSettingButtons.find("button[data-reset]");
-	
-	$straightsAdjacentSettingButtons.find("button").click(function(event) {
-		if ($(this).attr("data-reset") !== undefined) return;
-		let offset = $(this).attr("data-increment") !== undefined? 1 : ($(this).attr("data-decrement") !== undefined? -1 : 0);
-		let result = $straightsAdjacentSettingDisplay.data("level") + offset;
-		if (result >= 0) 
-		{
-			$straightsAdjacentSettingDisplay.data("level", result);
-			$straightsAdjacentSettingDisplay.text(result + " Adjacent");
-			$straightsAdjacentSettingDisplay.prop("disabled", (result == 0));
-		}
+	$("#setting-unit-count button, #setting-tiles-turn button, #setting-tiles-adjacent button, #setting-straights-minimal button, #setting-straights-adjacent button").filter("[data-reset]").click(function(event) {
+		let $this = $(this);
+		$this.data("level", $this.data("levelStart")).text($this.data("level") + $this.data("label")).prop("disabled", true);
 	});
 	
-	$straightsAdjacentSettingDisplay.click(function(event) {
-		$(this).data("level", 0).text($(this).data("level") + " Adjacent").prop("disabled", true);
-	}).data("level", 0);	
+	$("#setting-unit-count, #setting-tiles-turn").click(function(event) {
+		UpdateTurnDisplay(Turn);
+	});
 	
 	
 	// Tile Controller Logic ==========================================
@@ -215,11 +243,29 @@ $(function() {
 	
 	function $MakeItem() {
 		var $item = $("<li>").click(function() {
-			if ($pieceLastSelected && !$pieceLastSelected.data("committed"))
+			if ($pieceLastSelected && !$pieceLastSelected.data("committed")) {
 				$pieceLastSelected.removeClass("used");
+				$controls.hide();
+			}
+			
+			if ((Turn + 1) >= GetBoardUnitCount()) return;
 			
 			if ($(this).data("committed")) return;
 			$(this).data("committed", false)
+			
+
+			let neighbors = Neighbors($(this));
+			
+			if ($pieceLastCommitted) {
+				if (GetRemainingUnitsForTurn(Turn) <= GetRequiredAdjacentTilesPerTurn() &&
+					neighbors.indexOf($pieceLastCommitted[0]) < 0) {
+					console.log("Piece not adjacent!"); 
+					return;
+				}
+			}
+			
+			if (Turn > 0 && !CommittedNeighborCount(neighbors)) return;
+
 			
 			$pieceLastSelected = $(this);
 			
@@ -256,7 +302,7 @@ $(function() {
 		let $parent = $target.parent();
 		let neighbors = Neighbors($target);
 		
-		$pieceLastCommitted = $target;
+		$pieceLastCommitted = GetPlayerIDFromTurn(Turn) == GetPlayerIDFromTurn(Turn + 1)? $target : false;
 		
 		$target.data("committed", true);
 		
@@ -286,9 +332,6 @@ $(function() {
 				$(this).append($MakeItem());
 			});
 		}
-		
-		var date = new Date();
-		console.log(date.getTime());
 		
 		// Attach line between neighboring tiles
 		for (var thisFaceID = 0; thisFaceID < neighbors.length; thisFaceID++) {
@@ -325,9 +368,13 @@ $(function() {
 		if (winner) alert(winner + " won the game!");
 		
 		$controls.hide();
+		
+		UpdateTurnDisplay(++Turn);
 	})
 
 	
 	var $StartList = $("<ul>").append($MakeItem());
 	$("body > div#board").append($StartList);
+	
+	UpdateTurnDisplay(Turn);
 });
