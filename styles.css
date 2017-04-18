@@ -1,34 +1,19 @@
-.title{
-    font-size: 24px;
-    font-family:arial;
-}
-
-.table{
-    padding: 20px;
-
-}
-
-.content{
-    background-color: #cbcbb4;
-    font-family: arial;
-    padding:10px; 
-}
-
-
 body {
 	padding: 0px!important;
 	margin:	0px!important;
 	
 	overflow: scroll;
-	white-space: nowrap; /* To prevent wrapping of inline-block */
 	
 	font-family: arial, "Century Gothic";
 	
 	color: #333;
-	text-shadow: 0px -1px 0px white;
+	/*text-shadow: 0px -1px 0px white;*/
 }
 
 body > div#board {
+	white-space: nowrap; /* To prevent wrapping of inline-block */
+	overflow: scroll;
+	
 	font-size:0px; /* The Hell? */
 	padding: 36px 44.75px;
 	margin:0px;
@@ -53,7 +38,7 @@ body > div#board > ul {
 	margin-left: -8.75px;
 	margin-right: -8.75px;
 	
-	margin-bottom: 0px;
+	margin-bottom: 123px;
 }
 
 body > div#board > ul.offset {
@@ -66,7 +51,9 @@ body > div#board > ul > li {
 	height: 123px;
 	padding: 0;
 	/*padding-top: 1.8em;*/
-	margin: inherit;
+	margin-left: inherit;
+	margin-right: inherit;
+	margin-bottom: 0px;
 	background-image: url('unused-piece.png');
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -86,4 +73,19 @@ body > div#board > ul > li > * {
 	padding-left: 8.75px;
 	padding-right: 8.75px;
 	text-align: center;
+}
+
+body .blue-player, body .white-player {
+	background-color: #666;
+	border-radius: 3px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+body .blue-player {
+	color: #45c8ff;
+}
+
+body .white-player {
+	color: #FFFFFF;
 }

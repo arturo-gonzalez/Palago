@@ -18,79 +18,78 @@
 
 </head>
 <body>
+	
+	<!-- Navigation Bar -->
+	<nav class="navbar navbar-inverse navbar-static-top">
+		<div class="container-fluid">
 
-    	<!-- Navigation Bar -->
-		<nav class="navbar navbar-inverse navbar-static-top">
-			<div class="container-fluid">
+			<!-- The header below will only be visible on mobile -->
+			<header class="navbar-header">
+				<a class="navbar-brand" href="palago.html">
+					<span>Palago</span>
+				</a>
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
+					<!-- "Toggle navigation" only visible on screen-readers -->
+					<span class="sr-only">Toggle navigation</span>
 
-				<!-- The header below will only be visible on mobile -->
-				<header class="navbar-header">
-					<a class="navbar-brand" href="palago.html">
-						<span>Palago</span>
-					</a>
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
-						<!-- "Toggle navigation" only visible on screen-readers -->
-						<span class="sr-only">Toggle navigation</span>
+					<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</header>
 
-						<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</header>
+			<!-- Navigation links and other content will be collapsable when in mobile devices -->
+			<div class="collapse navbar-collapse" id="navbar-primary">
+				
+				<!-- Left navigation bar segment -->
+				<div class="navbar-left">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="help.html">Help</a>
+						</li>
+						<li>
+							<a href="about.html">About</a>
+						</li>
+					</ul>
+				</div>
 
-				<!-- Navigation links and other content will be collapsable when in mobile devices -->
-				<div class="collapse navbar-collapse" id="navbar-primary">
-					
-					<!-- Left navigation bar segment -->
-					<div class="navbar-left">
-						<ul class="nav navbar-nav">
-							<li>
-								<a href="help.html">Help</a>
-							</li>
-							<li>
-								<a href="about.html">About</a>
-							</li>
-						</ul>
-					</div>
-
-					<!-- Right navigation bar segment -->
-					<div class="navbar-right">
-						<p class="navbar-text" data-toggle="tooltip" data-placement="top">[ABOUT]</p>
-					</div>
+				<!-- Right navigation bar segment -->
+				<div class="navbar-right">
+					<p class="navbar-text">[ABOUT]</p>
 				</div>
 			</div>
-		</nav>
-
-    <table class="table" width="100%">
-        <tr>
-            <td>
-                <div class="content">
-                    <h1>Group Members</h1>
-                    <p> Matias Barcenas</p>
-                    <p> Arturo Gonzalez</p>
-                    <p> Ailing Li</p>
-                    <p> Fernando Martinez</p>
-
-                </div>
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                <div class="content">
-                    <h1>Ablut Palago</h1>
-                    
-                    <p>Palago was created by Cameron Brown in 2008. It is a two player game with a total of 48 identical hexagonal tiles. Each tile contains two colors, blue and white. Each contains a straight and a circular tip of each color. Each player has to play two tiles each turn and the two tiles must be adjacent to each other. There are two ways of winning the game: (1) by forming a closed solid colored shape that contains at least one straight tip tile; (2) by being the last player to make a move. </p>
-                    
-                    <p>Interested to know more from Cameron Brown, please visit the following link: </p>
-                    <p><a href="http://cameronius.com/games/palago/">http://cameronius.com/games/palago/<a></p>
-                </div>
-                
-            </td>
- 
-        </tr>
-    </table>
+		</div>
+	</nav>
+	
+	<main class="container-fluid">
+		<header class="page-header">
+			<h1>About <span class="glyphicon glyphicon-info-sign pull-right"></h1>
+		</header>
+		
+		<article class="panel panel-default">
+			<header class="panel-heading">
+				<h3 class="panel-title">Palago</h3>
+			</header>
+			<section class="panel-body">
+				<p>Palago was created by Cameron Brown in 2008. It is a two player game with a total of 48 identical hexagonal tiles. Each tile contains two colors, blue and white. Each contains a straight and a circular tip of each color. Each player has to play two tiles each turn and the two tiles must be adjacent to each other. There are two ways of winning the game: (1) by forming a closed solid colored shape that contains at least one straight tip tile; (2) by being the last player to make a move.</p>
+				<hr>
+				<p>If you're interested and would like to learn more from Cameron Brown's work, please visit the following link: <a href="http://cameronius.com/games/palago/">Cameron Brown's Palago Board Game</a></p>
+			</section>
+		</article>
+		
+		<article class="panel panel-default">
+			<header class="panel-heading">
+				<h3 class="panel-title">Group Members</h3>
+			</header>
+			<ul class="list-group">
+				<li class="list-group-item">Matias Barcenas</li>
+				<li class="list-group-item">Arturo Gonzalez</li>
+				<li class="list-group-item">Ailing Li</li>
+				<li class="list-group-item">Fernando Martinez</li>
+			</ul>
+		</article>
+	</main>
 
 </body>
 </html>

@@ -19,81 +19,99 @@
 </head>
 <body>
     
-    	<!-- Navigation Bar -->
-		<nav class="navbar navbar-inverse navbar-static-top">
-			<div class="container-fluid">
+	<!-- Navigation Bar -->
+	<nav class="navbar navbar-inverse navbar-static-top">
+		<div class="container-fluid">
 
-				<!-- The header below will only be visible on mobile -->
-				<header class="navbar-header">
-					<a class="navbar-brand" href="palago.html">
-						<span>Palago</span>
-					</a>
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
-						<!-- "Toggle navigation" only visible on screen-readers -->
-						<span class="sr-only">Toggle navigation</span>
+			<!-- The header below will only be visible on mobile -->
+			<header class="navbar-header">
+				<a class="navbar-brand" href="palago.html">
+					<span>Palago</span>
+				</a>
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-primary">
+					<!-- "Toggle navigation" only visible on screen-readers -->
+					<span class="sr-only">Toggle navigation</span>
 
-						<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</header>
+					<!-- The spans below comprise the [mobile's] menu button three horizontal bars -->
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</header>
 
-				<!-- Navigation links and other content will be collapsable when in mobile devices -->
-				<div class="collapse navbar-collapse" id="navbar-primary">
-					
-					<!-- Left navigation bar segment -->
-					<div class="navbar-left">
-						<ul class="nav navbar-nav">
-							<li>
-								<a href="help.html">Help</a>
-							</li>
-							<li>
-								<a href="about.html">About</a>
-							</li>
-						</ul>
-					</div>
+			<!-- Navigation links and other content will be collapsable when in mobile devices -->
+			<div class="collapse navbar-collapse" id="navbar-primary">
+				
+				<!-- Left navigation bar segment -->
+				<div class="navbar-left">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="help.html">Help</a>
+						</li>
+						<li>
+							<a href="about.html">About</a>
+						</li>
+					</ul>
+				</div>
 
-					<!-- Right navigation bar segment -->
-					<div class="navbar-right">
-						<p class="navbar-text" data-toggle="tooltip" data-placement="top">[HELP]</p>
-					</div>
+				<!-- Right navigation bar segment -->
+				<div class="navbar-right">
+					<p class="navbar-text">[HELP]</p>
 				</div>
 			</div>
-		</nav>	
-    
-    <table class="table">
-        <tr>
-            <td>
-                <div class="content">
-                    <h1>Rules</h1>
-                <p>Two players, White and Blue, share a common pool of 48 hexagonal Palago tiles. Each tile contains a straight and a circular tip of each colour, and may be oriented in three ways such that edge colours always match.</p>
-                <p>White places two adjacent tiles in the playing area, such that edge colours match. </p>
-                <p>Players then take turns adding two adjacent tiles, such that at least one touches an existing tile and all edge colours match. Both tiles must be played unless the first tile wins the game. </p>
-                <p>The game is won by the player to form a creature (closed group) of their colour with at least one straight. Only one tile need be played if that tile wins the game for either player.</p>
+		</div>
+	</nav>	
+
+	<main class="container-fluid">
+		<header class="page-header">
+			<h1>Help <span class="glyphicon glyphicon-question-sign pull-right"></span></h1>
+		</header>
+		
+		<article class="panel panel-default">
+			<header class="panel-heading">
+				<h3 class="panel-title">Rules</h3>
+			</header>
+			<section class="panel-body">
+				<p>Two players, <span class="white-player">White</span> and <span class="blue-player">Blue</span>, share a common pool of 48 hexagonal Palago tiles. Each tile contains a straight and a circular tip of each color, and may be oriented in three ways such that edge colors always match.</p>
+                <p>The <span class="white-player">White</span> player begins the board by placing two adjacent tiles in the playing area, such that the adjacent tile's edges match colors and connect properly.</p>
+                <p>Players then take turns adding two adjacent tiles, such that at least one touches an existing tile and all connecting edge colors match their neighbors. Two tiles must be played per turn, unless placing the first tile results in a player winning move.</p>
+                <p>The game is won by the player who first forms a creature (closed group) of their color with at least one straight. Only one tile need be played if that tile wins the game for either player.</p>
                 <p>If a move simultaneously completes winning creatures for both players then the mover loses. If the tiles run out before either player wins then the game is a draw.</p>
-                </div>
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                <div class="content">
-                      <h1>How to Play</h1>
-                        <p>You can simply click on the hexagonal shape and choose the orientation of the peace by clicking rotate. When you are ready to play the piece click place. Please keep in mind the following sugguestions. </p>
-
-                        <p><i>Forcing Moves: </i></p>
-                        <p> &emsp; A forced move occurs when pieces are placed in such a way that the opponent has only one play they must make to avoid defeat. Since the minimum number of pieces needed to win is 5, the minimum number of pieces needed to force a move is 3. 
-                        Types of Endgames (Endgames with types L, R, P, N). Assuming normal and optimal play, we determined that the second player should always win the game, making the default board state (blank/new board) be of type R. We diagnosed the following reasons why we think this is true: This is due to the fact that there are an even number of pieces in the game. It is futile for the first player to start a block-chain and continue repeating the same moves since that first player will run out of board pieces first, giving the second player the win by normal game (last move wins). 
-                        </p>
-                        <p><i>Hypothesis for good strategies: </i></p>
-                        <p> &emsp;With that information, the second player R, has the advantage because they are the first to have at least an extra piece available on the board, and a forced move is possible with at least three pieces. The player should create a forced move every turn, this strategy assures victory. This is a type P move. However the player needs to be careful with what forced move they try to make, some give an opportunity for the opponent to turn the tables and force a move. A player should make plays in which two simultaneous areas force a move (at least two pieces away from each other) which effectively ensure a winning strategy. Since the opponent can only play their pieces adjacent to each other, they cannot respond to both in one turn. </p>
-                </div>
-                
-            </td>
- 
-        </tr>
-    </table>
+			</section>
+		</article>
+		
+		<article class="panel panel-default">
+			<header class="panel-heading">
+				<h3 class="panel-title">Interface</h3>
+			</header>
+			<section class="panel-body">
+                <h5>Controls</h5>
+				<p>The player must simply click a gray (unused) hexagonal tile and choose the orientation of the piece by clicking the <i>rotate</i> link. When ready to play the piece, the player clicks <i>commit</i>.</p>
+			</section>
+			<section class="panel-body">
+                <h5>Turns</h5>
+				<p>The current player is always displayed on the top right of the screen, on the rightmost space of the navigation bar. Each player will be given two turns, indicated by the number next to the player ID (the player color).</p>
+			</section>
+		</article>
+			
+		<article class="panel panel-default">
+			<header class="panel-heading">
+				<h3 class="panel-title">Strategies &amp; Observations</h3>
+			</header>
+			<section class="panel-body">
+                <h5><i>Forcing Moves</i></h5>
+                <p>&emsp;A forced move occurs when pieces are placed in such a way that the opponent must play a blocking move to avoid defeat. Since the minimum number of pieces needed to win is 5, the minimum number of pieces needed to force a move is 3.</p>
+			</section>
+			<section class="panel-body">
+                <h5><i>Hypothesis for good strategies</i></h5>
+                <p>&emsp;With that information, the second player R, has the advantage because they are the first to have at least an extra piece available on the board, and a forced move is possible with at least three pieces. The player should create a forced move every turn, this strategy assures victory. This is a type P move. However the player needs to be careful with what forced move they try to make, some give an opportunity for the opponent to turn the tables and force a move. A player should make plays in which two simultaneous areas force a move (at least two pieces away from each other) which effectively ensure a winning strategy. Since the opponent can only play their pieces adjacent to each other, they cannot respond to both in one turn. </p>
+			</section>
+			<section class="panel-body">
+				<h5><i>Type of Endgames (L, R, P, N)</i></h5>
+				<p>&emsp;Assuming normal and optimal play, we determined that the second player should always win the game, making the default board state (blank/new board) be of type R. We diagnosed the following reasons why we think this is true: This is due to the fact that there are an even number of pieces in the game. It is futile for the first player to start a block-chain and continue repeating the same moves since that first player will run out of board pieces first, giving the second player the win by normal game (last move wins).</p>
+			</section>
+		</article>
+	</main>
 
 </body>
 </html>

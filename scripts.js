@@ -1,3 +1,29 @@
+var Turn = 0;
+
+function GetTilesPerTurn() {
+	return $("#setting-tiles-turn button[data-reset]").data("level");
+}
+
+function GetRequiredAdjacentTilesPerTurn() {
+	return $("#setting-tiles-adjacent button[data-reset]").data("level");
+}
+
+function GetPlayerIDFromTurn(turn) {
+	return Math.floor(turn / GetTilesPerTurn()) % 2;
+}
+
+function GetPlayerTurnFromTurn(turn) {
+	return turn % GetTilesPerTurn();
+}
+
+function GetBoardUnitCount() {
+	return $("#setting-unit-count button[data-reset]").data("level");
+}
+
+function UpdateTurnDisplay(turn) {
+	$("#turn-display").text("P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1) + " (" + (turn + 1) + "/" + GetBoardUnitCount() + ")");
+}
+
 function Neighbors($target) {
 	let $column = $target.parent();
 	let $columnPrev = $column.prev();
@@ -49,7 +75,19 @@ function Neighbors($target) {
 	return neighbors;
 }
 
-function HasCircuit(vertex) {
+function CommittedNeighborCount(neighbors) {
+	var count = 0;
+	for (var i = 0; i < neighbors.length; i++) {
+		count += neighbors[i] && $(neighbors[i]).hasClass("used")? 1 : 0;
+	}
+	return count;
+}
+
+function GetRemainingUnitsForTurn(turn) {
+	return $("#setting-tiles-turn button[data-reset]").data("level") - GetPlayerTurnFromTurn(turn);
+}
+
+function GetCircuit(vertex) {
 	var visited = new Array();
 	
 	if (!vertex) return false; // If no vertex was passed, a loop is impossible.
@@ -76,19 +114,82 @@ function HasCircuit(vertex) {
 		
 	} while (vertex); // If we've still go at least one unvisited vertex, continue checking.
 
-	
-	for (var v in visited) {
-		console.log(visited[v]);
-	}
-
-	return true;
+	return visited;
 }
 
-function IsClosed($target) {
+function GetCircuits($target) {
+	var circuits = new Array();
 	for (var thisVertexID in $target.data("edge")) {
-		if (HasCircuit($target.data("edge")[thisVertexID])) return true;
+		let circuit = GetCircuit($target.data("edge")[thisVertexID]);
+		circuits[thisVertexID] = circuit? circuit : false;
 	}
+	return circuits;	
+}
 
+function GetStraightCountFromCircuit(path) {
+	var totalStraight = 0;
+	for	(var i in path) {
+		if (path[i].edgeA.vertexID == 1) totalStraight += 1;
+		if (path[i].edgeB.vertexID == 1) totalStraight += 1;
+	}
+	return totalStraight / 2;
+}
+
+function GetStraightMaxAdjacentCountFromCircuit(path) {
+	var globalMaximum = 0;
+	var localMaximum = 0;
+	for (var i = 0; i < path.length || (localMaximum > 0 && i < path.length * 2); i++) {
+		let thisVertex = path[i % path.length];
+		let thatVertex = path[(i + 1) % path.length];
+		
+		thisVertex.edgeA.source.css("border", "1px solid red");
+		thatVertex.edgeA.source.css("border", "1px solid red");
+		
+		let thisEdge = (thisVertex.edgeA.destination[0] === thatVertex.edgeA.source[0])? thisVertex.edgeA : thisVertex.edgeB;
+		let thatEdge = (thatVertex.edgeA.destination[0] === thisVertex.edgeA.source[0])? thatVertex.edgeA : thatVertex.edgeB;
+		
+		if (thisEdge.vertexID != 1 || thatEdge.vertexID != 1) {
+			if (localMaximum > globalMaximum) globalMaximum = localMaximum; 
+			localMaximum = 0;
+		} else localMaximum++;
+		
+		
+		thisVertex.edgeA.source.css("border", "none");
+		thatVertex.edgeA.source.css("border", "none");
+	}
+	return (globalMaximum > 0)? globalMaximum + 1 : 0;
+}
+
+function GetWinnerFromTarget($target) {
+	let requiredStraightsMinimal = $("#setting-straights-minimal button[data-reset]").data("level");
+	let requiredStraigthsAdjacent = $("#setting-straights-adjacent button[data-reset]").data("level");
+	
+	let circuits = GetCircuits($target);
+	
+	// All will be initially assumed to not be candidates.
+	var candidateCircuit = [false, false, false];
+	
+	for (var c = 0; c < circuits.length; c++) {
+		if (!circuits[c]) continue;
+		if (GetStraightCountFromCircuit(circuits[c]) < requiredStraightsMinimal) continue;
+		if (GetStraightMaxAdjacentCountFromCircuit(circuits[c]) < requiredStraigthsAdjacent) continue;
+		candidateCircuit[c] = true;
+	}
+	
+	let playerACircuit = (circuits[0] && !circuits[1])? 0 : ((circuits[1] && circuits[2])? 1 : false);
+	let playerBCircuit = (circuits[2] && !circuits[1])? 2 : ((circuits[1] && circuits[0])? 1 : false);
+	
+	var playerAWon = false;
+	var playerBWon = false;
+	
+	if (playerACircuit !== false && candidateCircuit[playerACircuit]) playerAWon = true;
+	if (playerBCircuit !== false && candidateCircuit[playerBCircuit]) playerBWon = true;
+	
+	if (playerAWon && playerBWon) return "OPPONENT";
+	
+	if (playerAWon) return "PLAYER2";
+	if (playerBWon) return "PLAYER1";
+	
 	return false;
 }
 
@@ -102,17 +203,69 @@ function VertexIDForFaceID($piece, faceID) {
 }
 
 $(function() {
+	// Settings Interface Logic =======================================
+	// ================================================================
+	$("#setting-unit-count button[data-reset]").data({level:48, levelStart:48, levelMinimum:48, label:" Available"});
+	$("#setting-tiles-turn button[data-reset]").data({level:2, levelStart:2, levelMinimum:2, label:" Per Turn"});
+	$("#setting-tiles-adjacent button[data-reset]").data({level:1, levelStart:1, levelMinimum:1, label:" Adjacent"});
+	$("#setting-straights-minimal button[data-reset]").data({level:1, levelStart:1, levelMinimum:1, label:" Required"});
+	$("#setting-straights-adjacent button[data-reset]").data({level:0, levelStart:0, levelMinimum:0, label:" Adjacent"});
+	
+	$("#setting-unit-count button, #setting-tiles-turn button, #setting-tiles-adjacent button, #setting-straights-minimal button, #setting-straights-adjacent button").not("[data-reset]").click(function(event) {
+		let $display = $(this).closest("div.btn-group-justified").find("button[data-reset]");
+		
+		let offset = $(this).attr("data-increment") !== undefined? 1 : ($(this).attr("data-decrement") !== undefined? -1 : 0);
+		let result = $display.data("level") + offset;
+		
+		if (result >= $display.data("levelMinimum"))
+		{
+			$display.data("level", result);
+			$display.text(result + $display.data("label"));
+			$display.prop("disabled", (result == $display.data("levelMinimum")));
+		}
+	});
+	
+	$("#setting-unit-count button, #setting-tiles-turn button, #setting-tiles-adjacent button, #setting-straights-minimal button, #setting-straights-adjacent button").filter("[data-reset]").click(function(event) {
+		let $this = $(this);
+		$this.data("level", $this.data("levelStart")).text($this.data("level") + $this.data("label")).prop("disabled", true);
+	});
+	
+	$("#setting-unit-count, #setting-tiles-turn").click(function(event) {
+		UpdateTurnDisplay(Turn);
+	});
+	
+	
+	// Tile Controller Logic ==========================================
+	// ================================================================
 	let $controls = $($("#t-controls").html());
 	var $pieceLastCommitted = null;
 	var $pieceLastSelected = null;
 	
 	function $MakeItem() {
 		var $item = $("<li>").click(function() {
-			if ($pieceLastSelected && !$pieceLastSelected.data("committed"))
+			if ($pieceLastSelected && !$pieceLastSelected.data("committed")) {
 				$pieceLastSelected.removeClass("used");
+				$controls.hide();
+			}
+			
+			if ((Turn + 1) >= GetBoardUnitCount()) return;
 			
 			if ($(this).data("committed")) return;
 			$(this).data("committed", false)
+			
+
+			let neighbors = Neighbors($(this));
+			
+			if ($pieceLastCommitted) {
+				if (GetRemainingUnitsForTurn(Turn) <= GetRequiredAdjacentTilesPerTurn() &&
+					neighbors.indexOf($pieceLastCommitted[0]) < 0) {
+					console.log("Piece not adjacent!"); 
+					return;
+				}
+			}
+			
+			if (Turn > 0 && !CommittedNeighborCount(neighbors)) return;
+
 			
 			$pieceLastSelected = $(this);
 			
@@ -149,7 +302,7 @@ $(function() {
 		let $parent = $target.parent();
 		let neighbors = Neighbors($target);
 		
-		$pieceLastCommitted = $target;
+		$pieceLastCommitted = GetPlayerIDFromTurn(Turn) == GetPlayerIDFromTurn(Turn + 1)? $target : false;
 		
 		$target.data("committed", true);
 		
@@ -180,9 +333,6 @@ $(function() {
 			});
 		}
 		
-		var date = new Date();
-		console.log(date.getTime());
-		
 		// Attach line between neighboring tiles
 		for (var thisFaceID = 0; thisFaceID < neighbors.length; thisFaceID++) {
 			let $neighbor = neighbors[thisFaceID] && $(neighbors[thisFaceID]);
@@ -209,11 +359,18 @@ $(function() {
 			else thatVertex.edgeB = {source:$neighbor, destination:$target, vertexID:thisVertexID};
 		}
 		
-		if (IsClosed($target)) alert("Loop detected!");
-		
 		$controls.hide();
+		
+		let winner = GetWinnerFromTarget($target);
+		if (winner) alert(winner + " won the game!");
+		
+		
+		UpdateTurnDisplay(++Turn);
 	})
 
+	
 	var $StartList = $("<ul>").append($MakeItem());
 	$("body > div#board").append($StartList);
+	
+	UpdateTurnDisplay(Turn);
 });
