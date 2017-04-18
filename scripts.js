@@ -21,7 +21,7 @@ function GetBoardUnitCount() {
 }
 
 function UpdateTurnDisplay(turn) {
-	$("#turn-display").text("P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1) + " (" + (turn + 1) + "/" + GetBoardUnitCount() + ")");
+	$("#turn-display").text("Move " + (turn + 1) + "/" + GetBoardUnitCount() + ": P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1));
 }
 
 function Neighbors($target) {
