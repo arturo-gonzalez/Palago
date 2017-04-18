@@ -359,15 +359,11 @@ $(function() {
 			else thatVertex.edgeB = {source:$neighbor, destination:$target, vertexID:thisVertexID};
 		}
 		
-		/*let circuit = IsClosed($target);
-		if (path) {
-			console.log("Max adjacent straights: " + GetMaxAdjacentStraightCountFromPath(path));
-			alert("Loop detected!");
-		}*/
+		$controls.hide();
+		
 		let winner = GetWinnerFromTarget($target);
 		if (winner) alert(winner + " won the game!");
 		
-		$controls.hide();
 		
 		UpdateTurnDisplay(++Turn);
 	})
