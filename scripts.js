@@ -21,7 +21,8 @@ function GetBoardUnitCount() {
 }
 
 function UpdateTurnDisplay(turn) {
-	$("#turn-display").text("Move " + (turn + 1) + "/" + GetBoardUnitCount() + ": P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1));
+	if (turn < GetBoardUnitCount()) $("#turn-display").text("Move " + (turn + 1) + "/" + GetBoardUnitCount() + ": P" + (GetPlayerIDFromTurn(turn) + 1) + "-" + (GetPlayerTurnFromTurn(turn) + 1));
+	else $("#turn-display").text("Game Over");
 }
 
 function Neighbors($target) {
@@ -248,7 +249,7 @@ $(function() {
 				$controls.hide();
 			}
 			
-			if ((Turn + 1) >= GetBoardUnitCount()) return;
+			if ((Turn + 1) > GetBoardUnitCount()) return;
 			
 			if ($(this).data("committed")) return;
 			$(this).data("committed", false)
