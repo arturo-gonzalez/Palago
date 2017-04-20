@@ -80,6 +80,15 @@ function GetRemainingUnitsForTurn(turn) {
 	return $("#setting-tiles-turn button[data-reset]").data("level") - GetPlayerTurnFromTurn(turn);
 }
 
+function MarkCircuit(circuit) {
+	for (var i = 0; i < circuit.length; i++) {
+		let vertex = circuit[i];
+		let $slot = vertex.edgeA.source;
+		let $line = $slot.find("svg path.inline-" + vertex.edgeA.sourceVertexID);
+		$line.css("stroke", "#F60");
+	}
+}
+
 function GetCircuit(vertex) {
 	var visited = new Array();
 	
@@ -179,6 +188,9 @@ function GetWinnerFromTarget($target) {
 	
 	if (playerACircuit !== false && candidateCircuit[playerACircuit]) playerAWon = true;
 	if (playerBCircuit !== false && candidateCircuit[playerBCircuit]) playerBWon = true;
+	
+	if (typeof playerACircuit == "number") MarkCircuit(circuits[playerACircuit])
+	if (typeof playerBCircuit == "number") MarkCircuit(circuits[playerBCircuit]);
 	
 	if (playerAWon && playerBWon) return "Opponent";
 	
@@ -282,11 +294,11 @@ function $MakePiece(playable, playedEvent) {
 			let thatVertex = $neighbor.data("edge")[thatVertexID];
 			
 			// Push new edges to both pieces.
-			if (!thisVertex.edgeA) thisVertex.edgeA = {source:$li, destination:$neighbor, vertexID:thatVertexID};
-			else thisVertex.edgeB = {source:$li, destination:$neighbor, vertexID:thatVertexID};
+			if (!thisVertex.edgeA) thisVertex.edgeA = {source:$li, sourceVertexID:thisVertexID, destination:$neighbor, vertexID:thatVertexID};
+			else thisVertex.edgeB = {source:$li, sourceVertexID:thisVertexID, destination:$neighbor, vertexID:thatVertexID};
 			
-			if (!thatVertex.edgeA) thatVertex.edgeA = {source:$neighbor, destination:$li, vertexID:thisVertexID};
-			else thatVertex.edgeB = {source:$neighbor, destination:$li, vertexID:thisVertexID};
+			if (!thatVertex.edgeA) thatVertex.edgeA = {source:$neighbor, sourceVertexID:thatVertexID, destination:$li, vertexID:thisVertexID};
+			else thatVertex.edgeB = {source:$neighbor, sourceVertexID:thatVertexID, destination:$li, vertexID:thisVertexID};
 		}
 		
 		// Update last played to this one.
