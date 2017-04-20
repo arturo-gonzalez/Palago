@@ -86,6 +86,7 @@ function MarkCircuit(circuit) {
 		let $slot = vertex.edgeA.source;
 		let $line = $slot.find("svg path.inline-" + vertex.edgeA.sourceVertexID);
 		$line.css("stroke", "#F60");
+		$line.css("stroke-width", "4px");
 	}
 }
 
