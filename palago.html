@@ -180,17 +180,47 @@
 					</div>
 				</section>
 			</div>
-			<!--<div class="btn-group btn-group-justified">
-				<a href="#" type="button" class="btn btn-success">Apply Changes</a>
-			</div>-->
 		</article>
 
-		<template id="t-controls">
-			<div>
-				<p><a href="#" class="rotation">TURN</a></p>
-				<p><a href="#" class="commit">[PLACE]</a></p>
-			</div>
+		<template id="t-piece">			
+			<li disabled>
+				<svg class="piece" viewBox="0 0 102 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+				        <g transform="translate(0.000000, -1.000000)">
+				            <g transform="translate(1.000000, 1.000000)">
+				                <polyline class="playerA" points="8.573735 58.458824 24.999999 87.0037 74.81481 87.0037 99.72222 43.862804 74.81481 0.721911 24.999999 0.721911 0.092592 43.862807 8.573735 58.458824"></polyline>
+				                <g class="playerB" stroke-opacity="0.7372549">
+					                <!-- The following is the opponent's turn fill (not the line) -->
+				                    <path d="M6.325759,54.14826 C1.670122,46.26106 0.368474,43.780914 0.616461,43.269826 C1.82131,40.786688 12.173164,23.641001 12.472062,23.633496 C12.676706,23.628496 13.811977,24.367034 14.99489,25.275 C18.77938,28.179858 21.960989,33.11641 23.30927,38.175515 C24.131339,41.260134 24.11577,46.694373 23.27591,49.816975 C21.931236,54.816515 18.121108,60.3335 14.044145,63.18439 L12.356274,64.36467 L6.325751,54.14826 L6.325759,54.14826 Z" stroke-width="0.36791286"></path>
+				                    <!-- The following is the opponent's connector fill (not the line) -->
+				                    <path d="M50.34415,43.744484 L50.34415,0.995433 L62.64609,0.995433 L74.94803,0.995433 L81.20061,11.575644 L87.4532,22.155856 L85.99715,23.139962 C83.57934,24.774068 79.64657,29.166992 78.20321,31.845833 C74.3527,38.992179 74.34119,48.116195 78.17361,55.229163 C79.91991,58.470221 82.59217,61.58675 85.22861,63.45708 L87.44339,65.02829 L83.25585,72.07875 C80.95268,75.95649 78.11667,80.78347 76.95355,82.80535 L74.83884,86.48148 L62.59144,86.48748 L50.34405,86.49348 L50.34405,43.744434 L50.34415,43.744484 Z" stroke-width="0.36376065"></path>
+				                </g>
+				                <!-- The following is the inner middle line -->
+				                <path d="M50,87.2622 L50,0.26228" class="inline inline-1" stroke-width="1.01169646"></path>
+				                <!-- The following is the leftmost (player 2's) curve line -->
+				                <path d="M12.294311,22.837402 C19.503687,27.030271 24.362802,34.825945 24.397952,43.767255 C24.434492,53.060957 19.628563,60.90542 11.978642,65.02466" class="inline inline-2"></path>
+				                <!-- The following is the rightmost (player 1's) curve line -->
+				                <path d="M87.87071,65.08795 C80.48625,60.95578 75.47375,53.079709 75.41715,44.014561 C75.36025,34.903813 80.32386,26.931536 87.71742,22.723837" class="inline inline-0"></path>
+				                <polyline class="outline" points="8.573735 58.458824 24.999999 87.0037 74.81481 87.0037 99.72222 43.862804 74.81481 0.721911 24.999999 0.721911 0.092592 43.862807 8.573735 58.458824"></polyline>
+				            </g>
+				        </g>
+				    </g>
+				</svg>
+				<div class="btn-group btn-group-justified" role="group">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-offset="-120">&lt;</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-play>PLAY</button>
+					</div>
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-default" data-offset="120">&gt;</button>
+					</div>
+				</div>
+			</li>
 		</template>
+		
 		<div id="board"></div>
+		
 	</body>
 </html>

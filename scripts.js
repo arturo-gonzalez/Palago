@@ -76,14 +76,6 @@ function Neighbors($target) {
 	return neighbors;
 }
 
-function CommittedNeighborCount(neighbors) {
-	var count = 0;
-	for (var i = 0; i < neighbors.length; i++) {
-		count += neighbors[i] && $(neighbors[i]).hasClass("used")? 1 : 0;
-	}
-	return count;
-}
-
 function GetRemainingUnitsForTurn(turn) {
 	return $("#setting-tiles-turn button[data-reset]").data("level") - GetPlayerTurnFromTurn(turn);
 }
@@ -177,8 +169,10 @@ function GetWinnerFromTarget($target) {
 		candidateCircuit[c] = true;
 	}
 	
-	let playerACircuit = (circuits[0] && !circuits[1])? 0 : ((circuits[1] && circuits[2])? 1 : false);
-	let playerBCircuit = (circuits[2] && !circuits[1])? 2 : ((circuits[1] && circuits[0])? 1 : false);
+	//let playerACircuit = (circuits[0] && !circuits[1])? 0 : ((circuits[1] && circuits[2])? 1 : false);
+	//let playerBCircuit = (circuits[2] && !circuits[1])? 2 : ((circuits[1] && circuits[0])? 1 : false);
+	let playerACircuit = circuits[0]? 0 : ((circuits[1] && circuits[2])? 1 : false);
+	let playerBCircuit = circuits[2]? 2 : ((circuits[1] && circuits[0])? 1 : false);
 	
 	var playerAWon = false;
 	var playerBWon = false;
@@ -186,21 +180,141 @@ function GetWinnerFromTarget($target) {
 	if (playerACircuit !== false && candidateCircuit[playerACircuit]) playerAWon = true;
 	if (playerBCircuit !== false && candidateCircuit[playerBCircuit]) playerBWon = true;
 	
-	if (playerAWon && playerBWon) return "OPPONENT";
+	if (playerAWon && playerBWon) return "Opponent";
 	
-	if (playerAWon) return "PLAYER2";
-	if (playerBWon) return "PLAYER1";
+	if (playerAWon) return "Player 1";
+	if (playerBWon) return "Player 2";
 	
 	return false;
 }
 
 function VertexIDForFaceID($piece, faceID) {
-	let rotation = {0: 0, 120: 1, 240: 2}[$piece.data("rotation")];
-	let map = [[[0, 1], [2, 5], [3, 4]], [[2, 3], [1, 4], [0, 5]], [[4, 5], [0, 3], [1, 2]]][rotation];
+	let map = [[[1, 2], [0, 3], [4, 5]], [[3, 4], [2, 5], [0, 1]], [[0, 5], [1, 4], [2, 3]]][$piece.data("orientation") || 0]; 
 	
 	for (var i = 0; i < map.length; i++) {
 		if (map[i].indexOf(faceID) >= 0) return i;
 	}
+}
+
+// Tile Controller Logic ==========================================
+// ================================================================
+function $MakePiece(playable, playedEvent) {
+	let $board = $("body>div#board");
+	
+	let $li = $($("#t-piece").html());
+	let $controls = $li.find("div.btn-group");
+	let $piece = $li.find("svg");
+
+	$controls.find("button[data-play]").click(function(event) {
+		// Prepare all variables.
+		let $this = $(this);
+		
+		// Get the piece container/slot 
+		let $spot = $this.closest("li");
+		
+		// Make sure this spot hasn't already been played.
+		if ($spot.attr("data-played")) return;
+		
+		// Get the parent of the spot/slot.
+		let $column = $spot.closest("ul");
+		
+		// If a conditional function was passed, check if the spot is playable.
+		if (playable && !playable($spot)) {console.log("Not playable"); return;}
+		
+		// Assure board is properly expanded depending on which spot was used.
+		// Check if the left-most column was used and add another column if so.
+		if ($($board.children().first()).is($column)) {
+			let $list = $("<ul>").addClass($column.hasClass("offset")? "" : "offset");
+			$column.children().each(function(i) {
+				$list.append($MakePiece(playable, playedEvent));
+			});
+			$board.prepend($list);
+		}
+		
+		// Check if the right-most column was used and add another column if so.
+		if ($($board.children().last()).is($column)) {
+			let $list = $("<ul>").addClass($column.hasClass("offset")? "" : "offset");
+			$column.children().each(function(i) {
+				$list.append($MakePiece(playable, playedEvent));
+			});
+			$board.append($list);
+		}
+		
+		// Check if one of the top-most elements was used, add another.
+		if ($($column.children().first()).is($spot)) {
+			$board.children().each(function(i) {
+				$(this).prepend($MakePiece(playable, playedEvent));
+			});
+		}
+		
+		// Check if one of the bottom-most elements was used, add another.
+		if ($($column.children().last()).is($spot)) {
+			$board.children().each(function(i) {
+				$(this).append($MakePiece(playable, playedEvent));
+			});
+		}
+		
+		// Gather all neighboring li elements
+		let neighbors = Neighbors($spot);
+		
+		// After playing the piece, all adjacent neighbors are also enabled.
+		for (var i = 0; i < neighbors.length; i++) {
+			if (neighbors[i]) $(neighbors[i]).attr("disabled", false);
+		}
+		
+		
+		// Make edges between vertices on valid neighboring tiles.
+		for (var thisFaceID = 0; thisFaceID < neighbors.length; thisFaceID++) {
+			let $neighbor = neighbors[thisFaceID] && $(neighbors[thisFaceID]);
+			
+			// We only setup existing neighbors that are in use, skip the rest.
+			if (!$neighbor || !$neighbor.attr("data-played")) continue;
+			
+			// Determine our neighbor's face facing us (neighbor side connecting us).
+			let thatFaceID = (thisFaceID + 3) % 6;
+			
+			// Determine the vertex we're dealing with, based on the face of the pieces.
+			// These are different since different faces connect to different vertices.
+			let thisVertexID = VertexIDForFaceID($li, thisFaceID);
+			let thatVertexID = VertexIDForFaceID($neighbor, thatFaceID);
+			
+			let thisVertex = $li.data("edge")[thisVertexID];
+			let thatVertex = $neighbor.data("edge")[thatVertexID];
+			
+			// Push new edges to both pieces.
+			if (!thisVertex.edgeA) thisVertex.edgeA = {source:$li, destination:$neighbor, vertexID:thatVertexID};
+			else thisVertex.edgeB = {source:$li, destination:$neighbor, vertexID:thatVertexID};
+			
+			if (!thatVertex.edgeA) thatVertex.edgeA = {source:$neighbor, destination:$li, vertexID:thisVertexID};
+			else thatVertex.edgeB = {source:$neighbor, destination:$li, vertexID:thisVertexID};
+		}
+		
+		// Update last played to this one.
+		$board.data("previous-spot", $spot);
+		
+		// Mark the spot as played.
+		$spot.attr("data-played", true);
+		
+		if (playedEvent) playedEvent($spot);
+	});
+	
+	$controls.find("button:not([data-play])").click(function(event) {
+		let $this = $(this);
+		let rotation = ($piece.data("rotation") || 0) + parseInt($this.attr("data-offset"));
+		let orientation = (rotation / 120) % 3;
+		$piece.data("rotation", rotation);
+		$li.data("orientation", orientation < 0? 3 + orientation : orientation);
+		$piece.css("transform", "rotate(" + rotation + "deg)");
+	});
+	
+	// Initialize variables for edges/vertices.
+	$li.data("edge", [
+		{edgeA:false, edgeB:false}, 
+		{edgeA:false, edgeB:false}, 
+		{edgeA:false, edgeB:false}
+	]);
+	
+	return $li;
 }
 
 $(function() {
@@ -235,143 +349,36 @@ $(function() {
 		UpdateTurnDisplay(Turn);
 	});
 	
-	
-	// Tile Controller Logic ==========================================
-	// ================================================================
-	let $controls = $($("#t-controls").html());
-	var $pieceLastCommitted = null;
-	var $pieceLastSelected = null;
-	
-	function $MakeItem() {
-		var $item = $("<li>").click(function() {
-			if ($pieceLastSelected && !$pieceLastSelected.data("committed")) {
-				$pieceLastSelected.removeClass("used");
-				$controls.hide();
+
+	let $firstPiece = $MakePiece(function($spot) {
+		let $board = $spot.closest("div#board");
+		let $previousSpot = $board.data("previous-spot");
+		
+		// If we need x adjacent and we've got just enough peices, check if we're adjacent.
+		if (Turn > 0 && GetPlayerIDFromTurn(Turn) == GetPlayerIDFromTurn(Turn - 1) && GetRemainingUnitsForTurn(Turn) <= GetRequiredAdjacentTilesPerTurn()) {
+			let neighbors = Neighbors($spot);
+			if (neighbors.indexOf($previousSpot[0]) < 0) {
+				console.log("Piece not adjacent!"); 
+				return false;
 			}
-			
-			if ((Turn + 1) > GetBoardUnitCount()) return;
-			
-			if ($(this).data("committed")) return;
-			$(this).data("committed", false)
-			
-
-			let neighbors = Neighbors($(this));
-			
-			if ($pieceLastCommitted) {
-				if (GetRemainingUnitsForTurn(Turn) <= GetRequiredAdjacentTilesPerTurn() &&
-					neighbors.indexOf($pieceLastCommitted[0]) < 0) {
-					console.log("Piece not adjacent!"); 
-					return;
-				}
-			}
-			
-			if (Turn > 0 && !CommittedNeighborCount(neighbors)) return;
-
-			
-			$pieceLastSelected = $(this);
-			
-			$controls.css("transform", "rotate(" + ($(this).data("rotation")? ($(this).data("rotation") * -1) : 0) + "deg)");
-			$(this).addClass("used").append($controls);
-
-			$controls.show();
-		});
-		
-		$item.data("edge", [
-			{edgeA:false, edgeB:false}, 
-			{edgeA:false, edgeB:false}, 
-			{edgeA:false, edgeB:false}
-		]);
-		$item.data("rotation", 0);
-		
-		return $item;
-	}
-	
-	$controls.find("a.rotation").click(function() {
-		let $parent = $(this).closest("li");
-		let currentRotation = $parent.data("rotation") || 0;
-		let offsetRotation = 120;
-		let rotation = (currentRotation + offsetRotation) % 360;
-		$parent.css("transform", "rotate(" + rotation + "deg)");
-		$parent.data("rotation", rotation);
-		$parent.children().each(function(i, child) {
-			$(child).css("transform", "rotate(" + (-1 * $parent.data("rotation")) + "deg)")
-		});
-	})
-	
-	$controls.find("a.commit").click(function() {
-		let $target = $(this).closest("li");
-		let $parent = $target.parent();
-		let neighbors = Neighbors($target);
-		
-		$pieceLastCommitted = GetPlayerIDFromTurn(Turn) == GetPlayerIDFromTurn(Turn + 1)? $target : false;
-		
-		$target.data("committed", true);
-		
-		if ($("body > div#board > ul:first-child").is($parent)) {
-			var $list = $("<ul>");
-			if (!$parent.hasClass("offset")) $list.addClass("offset");
-			$parent.children().each(function(i) {
-				$list.append($MakeItem());
-			})
-			$("body > div#board").prepend($list);
-		}
-		if ($("body > div#board > ul:last-child").is($parent)) {
-			var $list = $("<ul>");
-			if (!$parent.hasClass("offset")) $list.addClass("offset");
-			$parent.children().each(function(i) {
-				$list.append($MakeItem());
-			})
-			$("body > div#board").append($list);
-		}
-		if ($($parent.children().first()).is($target)) {
-			$("body > div#board > ul").each(function(i) {
-				$(this).prepend($MakeItem());
-			});
-		}
-		if ($($parent.children().last()).is($target)) {
-			$("body > div#board > ul").each(function(i) {
-				$(this).append($MakeItem());
-			});
 		}
 		
-		// Attach line between neighboring tiles
-		for (var thisFaceID = 0; thisFaceID < neighbors.length; thisFaceID++) {
-			let $neighbor = neighbors[thisFaceID] && $(neighbors[thisFaceID]);
-			
-			// We only setup existing neighbors that are in use, skip the rest.
-			if (!$neighbor || !$neighbor.hasClass("used")) continue;
-			
-			// Determine our neighbor's face facing us (neighbor side connecting us).
-			let thatFaceID = (thisFaceID + 3) % 6;
-			
-			// Determine the vertex we're dealing with, based on the face of the pieces.
-			// These are different since different faces connect to different vertices.
-			let thisVertexID = VertexIDForFaceID($target, thisFaceID);
-			let thatVertexID = VertexIDForFaceID($neighbor, thatFaceID);
-			
-			let thisVertex = $target.data("edge")[thisVertexID];
-			let thatVertex = $neighbor.data("edge")[thatVertexID];
-			
-			// Push new edges to both pieces.
-			if (!thisVertex.edgeA) thisVertex.edgeA = {source:$target, destination:$neighbor, vertexID:thatVertexID};
-			else thisVertex.edgeB = {source:$target, destination:$neighbor, vertexID:thatVertexID};
-			
-			if (!thatVertex.edgeA) thatVertex.edgeA = {source:$neighbor, destination:$target, vertexID:thisVertexID};
-			else thatVertex.edgeB = {source:$neighbor, destination:$target, vertexID:thisVertexID};
-		}
-		
-		$controls.hide();
-		
-		let winner = GetWinnerFromTarget($target);
-		if (winner) alert(winner + " won the game!");
-		
-		
+		return true;
+	},
+	function($spot) {
 		UpdateTurnDisplay(++Turn);
-	})
-
+		
+		let winner = GetWinnerFromTarget($spot);
+		if (winner) alert("The winner is " + winner);
+		
+		// If the board's out of pieces, it's a draw.
+		if (Turn + 1 >= GetBoardUnitCount() || winner)
+			$("body>div#board").attr("disabled", true);
+		
+	});
 	
-	var $StartList = $("<ul>").append($MakeItem());
-	$("body > div#board").append($StartList);
+	$firstPiece.attr("disabled", false);
+	$("body>div#board").append($("<ul>").append($firstPiece));
 	
 	UpdateTurnDisplay(Turn);
 });
