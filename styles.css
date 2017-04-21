@@ -7,7 +7,6 @@ body {
 	font-family: arial, "Century Gothic";
 	
 	color: #333;
-	/*text-shadow: 0px -1px 0px white;*/
 }
 
 body > div#board {
@@ -41,37 +40,20 @@ body > div#board > ul {
 	margin-bottom: 123px;
 }
 
-body > div#board > ul.offset {
+body>div#board>ul.offset {
 	top: 62px;
-	/*left: -36px;*/
 }
 
-body > div#board > ul > li {
+body>div#board>ul>li {
 	width: 142px;
 	height: 123px;
 	padding: 0;
-	/*padding-top: 1.8em;*/
+	
 	margin-left: inherit;
 	margin-right: inherit;
 	margin-bottom: 0px;
-	background-image: url('unused-piece.png');
-	background-position: center center;
-	background-repeat: no-repeat;
 	
 	font-size: 18px;
-	text-align: center;
-}
-
-body > div#board > ul > li.used {
-	background-image: url('piece.png');
-}
-
-body > div#board > ul > li > * {
-	position: absolute;
-	width: 100%;
-	padding-top: 1em;
-	padding-left: 8.75px;
-	padding-right: 8.75px;
 	text-align: center;
 }
 
@@ -88,4 +70,72 @@ body .blue-player {
 
 body .white-player {
 	color: #FFFFFF;
+}
+
+body>div#board svg {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+body>div#board>ul>li>svg.piece path.inline,
+body>div#board>ul>li>svg.piece polyline.outline {
+	stroke: #999999;
+}
+
+body>div#board>ul>li>svg.piece polyline.playerA {
+	fill: #AAA;
+}
+
+body>div#board>ul>li>svg.piece g.playerB {
+	fill: #AAA;
+}
+
+body>div#board:not([disabled])>ul>li:not([disabled]):not([data-played])>svg.piece polyline.playerA {
+	fill: #DDD;
+}
+
+body>div#board:not([disabled])>ul>li:not([disabled]):not([data-played])>svg.piece g.playerB {
+	fill: #DDD;
+}
+
+body>div#board>ul>li>div.btn-group {
+	display: none;
+}
+
+/*body>div#board:not([disabled])>ul>li:not([disabled]):not([data-played])>svg.piece polyline.outline {
+	stroke: #F90;
+}*/
+
+body>div#board:not([disabled])>ul>li:not([disabled]):hover:not([data-played])>svg.piece path.inline,
+body>div#board>ul>li[data-played]>svg.piece path.inline,
+body>div#board:not([disabled])>ul>li:hover:not([disabled]):not([data-played])>svg.piece polyline.outline,
+body>div#board>ul>li[data-played]>svg.piece polyline.outline {
+	stroke: #000000;
+}
+
+body>div#board:not([disabled])>ul>li:hover:not([disabled]):not([data-played])>svg.piece polyline.playerA,
+body>div#board>ul>li[data-played]>svg.piece polyline.playerA {
+	fill: #FFFFFF;
+}
+
+
+body>div#board:not([disabled])>ul>li:hover:not([disabled]):not([data-played])>svg.piece g.playerB,
+body>div#board>ul>li[data-played]>svg.piece g.playerB {
+	fill: #40B2FF;
+}
+
+
+body>div#board:not([disabled])>ul>li:hover:not([disabled]):not([data-played])>div.btn-group {
+	display: block;
+}
+
+body>div#board>ul>li>div.btn-group {
+	opacity: 0.8;
+	margin-top: -38px;
+	z-index: 1000;
+}
+
+body>div#board>ul>li>div.btn-group button {
+	font-size: 12px!important;
 }
