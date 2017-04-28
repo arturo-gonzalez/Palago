@@ -179,19 +179,23 @@ function GetWinnerFromTarget($target) {
 		candidateCircuit[c] = true;
 	}
 	
-	//let playerACircuit = (circuits[0] && !circuits[1])? 0 : ((circuits[1] && circuits[2])? 1 : false);
-	//let playerBCircuit = (circuits[2] && !circuits[1])? 2 : ((circuits[1] && circuits[0])? 1 : false);
+	//let playerACircuit = circuits[0]? [0] : ((circuits[1] && circuits[2])? [1, 2] : false);
+	//let playerBCircuit = circuits[2]? [2] : ((circuits[1] && circuits[0])? [1, 0] : false);
 	let playerACircuit = circuits[0]? 0 : ((circuits[1] && circuits[2])? 1 : false);
 	let playerBCircuit = circuits[2]? 2 : ((circuits[1] && circuits[0])? 1 : false);
 	
 	var playerAWon = false;
 	var playerBWon = false;
 	
-	if (playerACircuit !== false && candidateCircuit[playerACircuit]) playerAWon = true;
-	if (playerBCircuit !== false && candidateCircuit[playerBCircuit]) playerBWon = true;
+	//if (typeof playerACircuit == "object" && candidateCircuit[playerACircuit[0]]) playerAWon = true;
+	//if (typeof playerBCircuit == "object" && candidateCircuit[playerBCircuit[0]]) playerBWon = true;
+	if (typeof playerACircuit == "number" && candidateCircuit[playerACircuit]) playerAWon = true;
+	if (typeof playerBCircuit == "number" && candidateCircuit[playerBCircuit]) playerBWon = true;
 	
-	if (typeof playerACircuit == "number") MarkCircuit(circuits[playerACircuit])
-	if (typeof playerBCircuit == "number") MarkCircuit(circuits[playerBCircuit]);
+	//if (playerAWon) for (var x = 0; x < playerACircuit.length; x++) {console.log("PA Marking: " + playerACircuit[x]); MarkCircuit(circuits[playerACircuit[x]]);}
+	//if (playerBWon) for (var y = 0; y < playerBCircuit.length; y++) {console.log("PB Marking: " + playerBCircuit[y]); MarkCircuit(circuits[playerBCircuit[y]]);}
+	if (playerAWon) MarkCircuit(circuits[playerACircuit]);
+	if (playerBWon) MarkCircuit(circuits[playerBCircuit]);
 	
 	if (playerAWon && playerBWon) return "Opponent";
 	
