@@ -1,8 +1,9 @@
+html,
 body {
 	padding: 0px!important;
 	margin:	0px!important;
 	
-	overflow: scroll;
+	height: 100%;
 	
 	font-family: arial, "Century Gothic";
 	
@@ -10,15 +11,12 @@ body {
 }
 
 body > div#board {
+	display: block;
 	white-space: nowrap; /* To prevent wrapping of inline-block */
-	overflow: scroll;
-	
-	width: 100%;
-	height: 100%;
-	
+		
 	font-size:0px; /* The Hell? */
-	padding: 36px 44.75px;
-	margin:0px;
+	margin: 0px;
+	padding: 80px 44.75px 44.75px 44.75px;
 }
 
 body > div#board a {
